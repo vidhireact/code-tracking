@@ -101,10 +101,11 @@ export default class Controller {
         return;
       }
 
-      let user = await getUserByEmail(payloadValue.userName.value);
+      let user = await getUserByEmail(payloadValue.email);
       if (!user) {
         res.status(401).json({
-          message: "Entered email has not been registered in priy account!",
+          message:
+            "Entered email has not been registered in executavia account!",
         });
         return;
       }
@@ -112,7 +113,7 @@ export default class Controller {
       if (!user) {
         res.status(401).json({
           message:
-            "Entered phone number has not been registered in priy account!",
+            "Entered phone number has not been registered in executavia account!",
         });
         return;
       }
