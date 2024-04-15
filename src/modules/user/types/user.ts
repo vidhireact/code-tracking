@@ -44,7 +44,7 @@ export class User implements IUser {
   _id?: string;
   fistName: string;
   lastName: string;
-  phoneNumber?: string;
+  phoneNumber: string;
   isPhoneVerified?: boolean;
 
   email: string;

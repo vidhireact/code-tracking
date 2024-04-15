@@ -10,15 +10,13 @@ import {
   getUserByNumber,
   IUser,
   updateUser,
-  // getUserByEmail,
-  // getPopulatedUser,
   User,
-  // getUsers,
 } from "../../modules/user";
 
 export default class Controller {
   protected readonly updateUserSchema = Joi.object({
-    fullName: Joi.string(),
+    firstName: Joi.string().optional(),
+    lastName: Joi.string().optional(),
     email: Joi.string().email(),
     phoneNumber: Joi.string()
       .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
@@ -32,9 +30,10 @@ export default class Controller {
         }
         return v;
       }),
-    dob: Joi.date().optional(),
     address: Joi.string().optional(),
     profilePic: Joi.string().optional(),
+    latitude: Joi.number().optional(),
+    longitude: Joi.number().optional(),
   });
 
   protected readonly updatePhoneSchema = Joi.object({
