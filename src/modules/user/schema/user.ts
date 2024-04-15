@@ -3,50 +3,56 @@ import { IUser } from "../types";
 
 const user = new Schema<IUser>(
   {
-    email: {
+    fistName: {
       type: String,
     },
-    password: {
+    lastName: {
       type: String,
     },
     phoneNumber: {
       type: String,
+      unique: true,
+      required: true,
     },
-    fullName: {
+    isPhoneVerified: {
+      type: Boolean,
+      default: false,
+    },
+    email: {
       type: String,
+      required: true,
+      unique: true,
     },
-
     isEmailVerified: {
       type: Boolean,
+      default: false,
     },
-
-    FCMToken: [
-      {
-        type: String,
-      },
-    ],
-
-    dob: {
-      type: Date,
+    password: {
+      type: String,
+      required: true,
     },
     address: {
       type: String,
     },
+    latitude: {
+      type: Number,
+    },
+    longitude: {
+      type: Number,
+    },
+    selectedRadius: {
+      type: Number,
+    },
     profilePic: {
       type: String,
-      // type: Types.ObjectId,
-      // ref: "file",
-    },
-    googleId: {
-      type: String,
-    },
-    googleLogin: {
-      type: Boolean,
     },
     userType: {
       type: String,
+      required: true,
+      default: "USER",
     },
   },
+
   { timestamps: true }
 );
 
