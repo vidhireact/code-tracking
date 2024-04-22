@@ -4,6 +4,7 @@ import { IService } from "../../service";
 import { IPlan } from "../../plan";
 import { ILocation } from "../../location";
 import { IGrowthCollaborative } from "../../growth-collaborative";
+import { IUser } from "../../user";
 
 export interface IBusiness {
   _id?: string;
@@ -14,9 +15,11 @@ export interface IBusiness {
   service: string | IService;
 
   planIds: (string | IPlan)[];
-  growthCollaborativeIds: (string | IGrowthCollaborative)[];
+  growthCollaborativeId: string | IGrowthCollaborative;
 
   locationIds: (string | ILocation)[];
+
+  userId: string | IUser;
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -31,9 +34,11 @@ export class Business implements IBusiness {
   service: string | IService;
 
   planIds: (string | IPlan)[];
-  growthCollaborativeIds: (string | IGrowthCollaborative)[];
+  growthCollaborativeId: string | IGrowthCollaborative;
 
   locationIds: (string | ILocation)[];
+
+  userId: string | IUser;
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -49,9 +54,11 @@ export class Business implements IBusiness {
     this.service = input.service;
 
     this.planIds = input.planIds;
-    this.growthCollaborativeIds = input.growthCollaborativeIds;
+    this.growthCollaborativeId = input.growthCollaborativeId;
 
     this.locationIds = input.locationIds;
+
+    this.userId = input.userId;
 
     this.createdAt = input.createdAt;
     this.updatedAt = input.updatedAt;

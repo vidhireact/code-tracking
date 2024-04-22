@@ -22,18 +22,20 @@ const business = new Schema<IBusiness>(
         ref: "plan",
       },
     ],
-    growthCollaborativeIds: [
-      {
-        type: Types.ObjectId,
-        ref: "growth-collaborative",
-      },
-    ],
+    growthCollaborativeId: {
+      type: Types.ObjectId,
+      ref: "growth-collaborative",
+    },
     locationIds: [
       {
         type: Types.ObjectId,
         ref: "location",
       },
     ],
+    userId: {
+      type: Types.ObjectId,
+      ref: "user",
+    },
   },
   {
     timestamps: true,
