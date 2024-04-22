@@ -3,36 +3,42 @@ import { Response } from "express";
 import Joi, { isError } from "joi";
 import { get as _get } from "lodash";
 import {
-  getService,
-  getServiceById,
-  Service,
-  saveService,
-  updateService,
-  // deleteService,
-} from "../../../modules/service";
+  getLocation,
+  getLocationById,
+  Location,
+  saveLocation,
+  updateLocation,
+  // deleteLocation,
+} from "../../../modules/location";
 import { Request } from "../../../request";
 
 export default class Controller {
   private readonly createSchema = Joi.object().keys({
     name: Joi.string().required(),
+    address: Joi.string().required(),
+    latitude: Joi.string().required(),
+    longitude: Joi.string().required(),
   });
   private readonly updateSchema = Joi.object().keys({
     name: Joi.string().optional(),
+    address: Joi.string().optional(),
+    latitude: Joi.string().optional(),
+    longitude: Joi.string().optional(),
   });
 
   protected readonly get = async (req: Request, res: Response) => {
-    const ServiceId = req.params._id;
-    if (ServiceId) {
-      const service = await getServiceById(ServiceId);
-      if (!service) {
-        res.status(422).json({ message: "Invalid Service." });
+    const LocationId = req.params._id;
+    if (LocationId) {
+      const location = await getLocationById(LocationId);
+      if (!location) {
+        res.status(422).json({ message: "Invalid Location." });
         return;
       }
-      res.status(200).json(service);
+      res.status(200).json(location);
       return;
     }
-    const services = await getService();
-    res.status(200).json(services);
+    const locations = await getLocation();
+    res.status(200).json(locations);
   };
 
   protected readonly create = async (req: Request, res: Response) => {
@@ -58,16 +64,16 @@ export default class Controller {
         return;
       }
 
-      const service = await saveService(
-        new Service({
+      const location = await saveLocation(
+        new Location({
           ...payloadValue,
         })
       );
 
-      const newService = await getServiceById(service._id);
-      res.status(200).json(newService);
+      const newLocation = await getLocationById(location._id);
+      res.status(200).json(newLocation);
     } catch (error) {
-      console.log("error", "error in create service", error);
+      console.log("error", "error in create location", error);
       res.status(500).json({
         message: "Hmm... Something went wrong. Please try again later.",
         error: _get(error, "message"),
@@ -78,14 +84,14 @@ export default class Controller {
   protected readonly update = async (req: Request, res: Response) => {
     try {
       const payload = req.body;
-      const serviceId = req.params._id;
-      if (!serviceId) {
-        res.status(422).json({ message: "Invalid Service." });
+      const locationId = req.params._id;
+      if (!locationId) {
+        res.status(422).json({ message: "Invalid Location." });
         return;
       }
-      const service = await getServiceById(serviceId);
-      if (!service) {
-        res.status(422).json({ message: "Invalid Service." });
+      const location = await getLocationById(locationId);
+      if (!location) {
+        res.status(422).json({ message: "Invalid Location." });
         return;
       }
 
@@ -108,13 +114,13 @@ export default class Controller {
         return;
       }
 
-      const updatedService = await updateService(
-        new Service({ ...service.toJSON(), ...payloadValue })
+      const updatedLocation = await updateLocation(
+        new Location({ ...location.toJSON(), ...payloadValue })
       );
 
-      res.status(200).json(updatedService);
+      res.status(200).json(updatedLocation);
     } catch (error) {
-      console.log("error", "error in Updating Service", error);
+      console.log("error", "error in Updating Location", error);
       res.status(500).json({
         message: "Hmm... Something went wrong. Please try again later.",
         error: _get(error, "message"),
@@ -124,20 +130,20 @@ export default class Controller {
 
   protected readonly delete = async (req: Request, res: Response) => {
     try {
-      const serviceId = req.params._id;
-      if (!serviceId) {
-        res.status(422).json({ message: "Invalid Service." });
+      const locationId = req.params._id;
+      if (!locationId) {
+        res.status(422).json({ message: "Invalid Location." });
         return;
       }
-      const service = await getServiceById(serviceId);
-      if (!service) {
-        res.status(422).json({ message: "Invalid Service." });
+      const location = await getLocationById(locationId);
+      if (!location) {
+        res.status(422).json({ message: "Invalid Location." });
         return;
       }
-      // await deleteService(serviceId);
-      res.status(200).json({ message: "Service is Deleted Successfully. " });
+      // await deleteLocation(locationId);
+      res.status(200).json({ message: "Location is Deleted Successfully. " });
     } catch (error) {
-      console.log("error", "error in Deleting Service", error);
+      console.log("error", "error in Deleting Location", error);
       res.status(500).json({
         message: "Hmm... Something went wrong. Please try again later.",
         error: _get(error, "message"),
