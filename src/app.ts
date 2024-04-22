@@ -5,6 +5,8 @@ import { middleware as contextMiddleware } from "express-http-context";
 import User from "./controller/user";
 import Auth from "./controller/auth";
 import { validateAuthIdToken } from "./middleware/validateAuthIdToken";
+import Admin from "./controller/admin";
+import { validateIsAdmin } from "./middleware/validateIsAdmin";
 
 export default class App {
   public static instance: Application;
@@ -44,6 +46,12 @@ export default class App {
 
   private static initializeControllers() {
     // Mount controllers
+    this.instance.use(
+      "/admin",
+      validateAuthIdToken,
+      validateIsAdmin,
+      new Admin().instance
+    );
     this.instance.use("/auth", new Auth().router);
     this.instance.use("/user", validateAuthIdToken, new User().router);
   }
