@@ -1,5 +1,6 @@
 import { isUndefined, omitBy } from "lodash";
 import { Types } from "mongoose";
+import { IUser } from "../../user";
 
 export interface ILocation {
   _id?: string;
@@ -8,6 +9,8 @@ export interface ILocation {
 
   latitude: number;
   longitude: number;
+
+  userId: string | IUser;
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -21,6 +24,8 @@ export class Location implements ILocation {
   latitude: number;
   longitude: number;
 
+  userId: string | IUser;
+
   createdAt?: Date;
   updatedAt?: Date;
 
@@ -32,6 +37,7 @@ export class Location implements ILocation {
     this.address = input.address;
     this.latitude = input.latitude;
     this.longitude = input.longitude;
+    this.userId = input.userId;
     this.createdAt = input.createdAt;
     this.updatedAt = input.updatedAt;
   }

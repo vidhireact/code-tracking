@@ -1,6 +1,6 @@
 import { Response } from "express";
 
-import Joi, { isError } from "joi";
+import Joi from "joi";
 import { get as _get } from "lodash";
 import {
   getGrowthCollaborative,
@@ -65,13 +65,8 @@ export default class Controller {
         })
         .catch((e) => {
           console.log(e);
-          if (isError(e)) {
-            res.status(422).json(e);
-            return;
-          } else {
-            res.status(422).json({ message: e.message });
-            return;
-          }
+          res.status(422).json({ message: e.message });
+          return;
         });
       if (!payloadValue) {
         return;
@@ -119,13 +114,8 @@ export default class Controller {
         })
         .catch((e) => {
           console.log(e);
-          if (isError(e)) {
-            res.status(422).json(e);
-            return;
-          } else {
-            res.status(422).json({ message: e.message });
-            return;
-          }
+          res.status(422).json({ message: e.message });
+          return;
         });
       if (!payloadValue) {
         return;

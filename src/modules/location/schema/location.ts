@@ -15,6 +15,10 @@ const location = new Schema<ILocation>(
     longitude: {
       type: Number,
     },
+    userId: {
+      type: Types.ObjectId,
+      ref: "user",
+    },
   },
   { timestamps: true }
 );
