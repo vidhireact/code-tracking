@@ -11,9 +11,9 @@ export default class Business extends Controller {
 
   private initializeRoutes() {
     this.router.post("", this.create);
-    this.router.patch("/:locationId", this.update);
+    this.router.patch("/:businessId", this.update);
     this.router.get("/", this.get);
-    this.router.get("/:locationId", this.get);
-    this.router.delete("/:locationId", this.delete);
+    this.router.get("/:businessId", this.get);
+    this.router.delete("/:businessId", this.delete);
   }
 }

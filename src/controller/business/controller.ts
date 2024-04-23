@@ -8,6 +8,7 @@ import {
   saveBusiness,
   updateBusiness,
   getBusinessByUserId,
+  getPopulatedBusiness,
   // deleteBusiness,
 } from "../../modules/business";
 import { Request } from "../../request";
@@ -20,7 +21,7 @@ export default class Controller {
   private readonly createSchema = Joi.object().keys({
     name: Joi.string().required(),
     description: Joi.string().required(),
-    logo: Joi.number().required(),
+    logo: Joi.string().required(),
     service: Joi.string()
       .required()
       .external(async (v: string) => {
@@ -50,8 +51,8 @@ export default class Controller {
         if (!value) return;
         if (!value.length) return;
         value.map(async (item) => {
-          const image = await getLocationById(item.toString());
-          if (!image) throw new Error("Please provide valid location.");
+          const location = await getLocationById(item.toString());
+          if (!location) throw new Error("Please provide valid location.");
         });
         return value;
       }),
@@ -62,17 +63,17 @@ export default class Controller {
         if (!value) return;
         if (!value.length) return;
         value.map(async (item) => {
-          const image = await getPlanById(item.toString());
-          if (!image) throw new Error("Please provide valid Plan.");
+          const plan = await getPlanById(item.toString());
+          if (!plan) throw new Error("Please provide valid Plan.");
         });
         return value;
       }),
   });
+
   private readonly updateSchema = Joi.object().keys({
     name: Joi.string().optional(),
-    address: Joi.string().optional(),
-    latitude: Joi.number().optional(),
-    longitude: Joi.number().optional(),
+    description: Joi.string().optional(),
+    logo: Joi.string().optional(),
     service: Joi.string()
       .optional()
       .external(async (v: string) => {
@@ -90,8 +91,8 @@ export default class Controller {
         if (!value) return;
         if (!value.length) return;
         value.map(async (item) => {
-          const image = await getLocationById(item.toString());
-          if (!image) throw new Error("Please provide valid location.");
+          const location = await getLocationById(item.toString());
+          if (!location) throw new Error("Please provide valid location.");
         });
         return value;
       }),
@@ -102,8 +103,8 @@ export default class Controller {
         if (!value) return;
         if (!value.length) return;
         value.map(async (item) => {
-          const image = await getPlanById(item.toString());
-          if (!image) throw new Error("Please provide valid Plan.");
+          const plan = await getPlanById(item.toString());
+          if (!plan) throw new Error("Please provide valid Plan.");
         });
         return value;
       }),
@@ -113,7 +114,7 @@ export default class Controller {
     const { businessId } = req.params;
     const authUser = req.authUser;
     if (businessId) {
-      const business = await getBusinessById(businessId);
+      const business = await getPopulatedBusiness(businessId);
       if (!business) {
         res.status(422).json({ message: "Invalid Business." });
         return;
