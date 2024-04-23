@@ -5,6 +5,7 @@ import { get as _get } from "lodash";
 import {
   getGrowthCollaborative,
   getGrowthCollaborativeById,
+  getPopulatedGrowthCollaborative,
   GrowthCollaborative,
   saveGrowthCollaborative,
   updateGrowthCollaborative,
@@ -18,7 +19,7 @@ export default class Controller {
     name: Joi.string().required(),
     description: Joi.string().required(),
     keyFeatures: Joi.string().required(),
-    percentage: Joi.string().required(),
+    percentage: Joi.number().required(),
     service: Joi.string()
       .required()
       .external(async (v: string) => {
@@ -34,13 +35,13 @@ export default class Controller {
     name: Joi.string().optional(),
     description: Joi.string().optional(),
     keyFeatures: Joi.string().optional(),
-    percentage: Joi.string().optional(),
+    percentage: Joi.number().optional(),
   });
 
   protected readonly get = async (req: Request, res: Response) => {
     const GrowthCollaborativeId = req.params._id;
     if (GrowthCollaborativeId) {
-      const growthCollaborative = await getGrowthCollaborativeById(
+      const growthCollaborative = await getPopulatedGrowthCollaborative(
         GrowthCollaborativeId
       );
       if (!growthCollaborative) {

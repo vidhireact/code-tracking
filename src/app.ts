@@ -8,6 +8,7 @@ import { validateAuthIdToken } from "./middleware/validateAuthIdToken";
 import Admin from "./controller/admin";
 import { validateIsAdmin } from "./middleware/validateIsAdmin";
 import Location from "./controller/location";
+import Business from "./controller/business";
 
 export default class App {
   public static instance: Application;
@@ -56,5 +57,6 @@ export default class App {
     this.instance.use("/auth", new Auth().router);
     this.instance.use("/user", validateAuthIdToken, new User().router);
     this.instance.use("/location", validateAuthIdToken, new Location().router);
+    this.instance.use("/business", validateAuthIdToken, new Business().router);
   }
 }
