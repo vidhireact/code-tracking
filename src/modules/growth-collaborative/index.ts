@@ -1,5 +1,6 @@
 export * from "./types";
 export * from "./schema";
+export * from "./getGrowthCollaborative";
 export * from "./getGrowthCollaborativeById";
 export * from "./getGrowthCollaborativeByService";
 export * from "./getGrowthCollaborativeByUserId";
