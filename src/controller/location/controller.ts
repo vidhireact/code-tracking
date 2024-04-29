@@ -18,12 +18,26 @@ export default class Controller {
     address: Joi.string().required(),
     latitude: Joi.number().required(),
     longitude: Joi.number().required(),
+    notificationTitle: Joi.number().required(),
+    email: Joi.string().email().required(),
+    scheduleLink: Joi.string().required(),
+    website: Joi.string().required(),
+    phoneNumber: Joi.string()
+      .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
+      .required(),
   });
   private readonly updateSchema = Joi.object().keys({
     name: Joi.string().optional(),
     address: Joi.string().optional(),
     latitude: Joi.number().optional(),
     longitude: Joi.number().optional(),
+    notificationTitle: Joi.number().optional(),
+    email: Joi.string().email().optional(),
+    scheduleLink: Joi.string().optional(),
+    website: Joi.string().optional(),
+    phoneNumber: Joi.string()
+      .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
+      .optional(),
   });
 
   protected readonly get = async (req: Request, res: Response) => {

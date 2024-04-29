@@ -12,6 +12,12 @@ export interface ILocation {
 
   userId: string | IUser;
 
+  notificationTitle: string;
+  email: string;
+  scheduleLink: string;
+  website: string;
+  phoneNumber: string;
+
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -25,6 +31,12 @@ export class Location implements ILocation {
   longitude: number;
 
   userId: string | IUser;
+
+  notificationTitle: string;
+  email: string;
+  scheduleLink: string;
+  website: string;
+  phoneNumber: string;
 
   createdAt?: Date;
   updatedAt?: Date;
