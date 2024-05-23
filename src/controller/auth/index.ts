@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { validateAuthIdToken } from "../../middleware/validateAuthIdToken";
-import { validateIsAdmin } from "../../middleware/validateIsAdmin";
 import Controller from "./controller";
 
 export default class Auth extends Controller {
@@ -16,7 +15,7 @@ export default class Auth extends Controller {
     this.router.post(
       "/session",
       validateAuthIdToken,
-      validateIsAdmin,
+      // validateIsAdmin,
       this.session
     );
     this.router.post("/register", this.register);

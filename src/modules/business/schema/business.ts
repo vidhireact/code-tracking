@@ -12,6 +12,12 @@ const business = new Schema<IBusiness>(
     logo: {
       type: String,
     },
+    email: {
+      type: String,
+    },
+    phoneNumber: {
+      type: String,
+    },
     service: {
       type: Types.ObjectId,
       ref: "service",

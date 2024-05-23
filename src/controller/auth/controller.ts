@@ -10,7 +10,7 @@ import {
   getPopulatedUser,
   getUserByNumber,
 } from "../../modules/user";
-import { get as _get, compact as _compact } from "lodash";
+import { get as _get } from "lodash";
 
 export default class Controller {
   private readonly loginSchema = Joi.object({
@@ -184,13 +184,6 @@ export default class Controller {
 
   protected readonly session = async (req: Request, res: Response) => {
     try {
-      const isAdmin = req.isAdmin;
-
-      if (!isAdmin) {
-        res.status(403).json({ message: "Unauthorized request." }).end();
-        return;
-      }
-
       res.status(200).json(req.authUser);
     } catch (error) {
       console.log("error", "error at get session#################### ", error);

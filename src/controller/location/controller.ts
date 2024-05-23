@@ -11,6 +11,7 @@ import {
   // deleteLocation,
 } from "../../modules/location";
 import { Request } from "../../request";
+import { getBusinessById } from "../../modules/business";
 
 export default class Controller {
   private readonly createSchema = Joi.object().keys({
@@ -25,6 +26,13 @@ export default class Controller {
     phoneNumber: Joi.string()
       .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
       .required(),
+    businessId: Joi.string()
+      .required()
+      .external(async (value) => {
+        const business = await getBusinessById(value.toString());
+        if (!business) throw new Error("Please provide valid Business.");
+        return value;
+      }),
   });
   private readonly updateSchema = Joi.object().keys({
     name: Joi.string().optional(),

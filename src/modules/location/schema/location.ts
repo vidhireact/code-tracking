@@ -19,6 +19,10 @@ const location = new Schema<ILocation>(
       type: Types.ObjectId,
       ref: "user",
     },
+    businessId: {
+      type: Types.ObjectId,
+      ref: "business",
+    },
   },
   { timestamps: true }
 );

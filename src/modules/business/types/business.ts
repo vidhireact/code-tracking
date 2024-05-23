@@ -13,6 +13,8 @@ export interface IBusiness {
   logo?: string;
 
   service: string | IService;
+  email: string;
+  phoneNumber: string;
 
   planIds: (string | IPlan)[];
   growthCollaborativeId: string | IGrowthCollaborative;
@@ -32,6 +34,8 @@ export class Business implements IBusiness {
   logo?: string;
 
   service: string | IService;
+  email: string;
+  phoneNumber: string;
 
   planIds: (string | IPlan)[];
   growthCollaborativeId: string | IGrowthCollaborative;
@@ -52,6 +56,8 @@ export class Business implements IBusiness {
     this.logo = input.logo;
 
     this.service = input.service;
+    this.email = input.email;
+    this.phoneNumber = input.phoneNumber;
 
     this.planIds = input.planIds;
     this.growthCollaborativeId = input.growthCollaborativeId;
