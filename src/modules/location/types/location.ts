@@ -53,6 +53,11 @@ export class Location implements ILocation {
     this.latitude = input.latitude;
     this.longitude = input.longitude;
     this.userId = input.userId;
+    this.notificationTitle = input.notificationTitle;
+    this.email = input.email;
+    this.scheduleLink = input.scheduleLink;
+    this.website = input.website;
+    this.phoneNumber = input.phoneNumber;
     this.businessId = input.businessId;
     this.createdAt = input.createdAt;
     this.updatedAt = input.updatedAt;

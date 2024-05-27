@@ -11,7 +11,11 @@ import {
   // deleteLocation,
 } from "../../modules/location";
 import { Request } from "../../request";
-import { getBusinessById } from "../../modules/business";
+import {
+  Business,
+  getBusinessById,
+  updateBusiness,
+} from "../../modules/business";
 
 export default class Controller {
   private readonly createSchema = Joi.object().keys({
@@ -19,7 +23,7 @@ export default class Controller {
     address: Joi.string().required(),
     latitude: Joi.number().required(),
     longitude: Joi.number().required(),
-    notificationTitle: Joi.number().required(),
+    notificationTitle: Joi.string().required(),
     email: Joi.string().email().required(),
     scheduleLink: Joi.string().required(),
     website: Joi.string().required(),
@@ -39,7 +43,7 @@ export default class Controller {
     address: Joi.string().optional(),
     latitude: Joi.number().optional(),
     longitude: Joi.number().optional(),
-    notificationTitle: Joi.number().optional(),
+    notificationTitle: Joi.string().optional(),
     email: Joi.string().email().optional(),
     scheduleLink: Joi.string().optional(),
     website: Joi.string().optional(),
@@ -89,6 +93,18 @@ export default class Controller {
       );
 
       const newLocation = await getLocationById(location._id);
+
+      const business = await getBusinessById(
+        payloadValue.businessId.toString()
+      );
+
+      await updateBusiness(
+        new Business({
+          ...business,
+          locationIds: [location._id.toString(), ...business.locationIds],
+        })
+      );
+
       res.status(200).json(newLocation);
     } catch (error) {
       console.log("error", "error in create location", error);

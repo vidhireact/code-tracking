@@ -15,6 +15,21 @@ const location = new Schema<ILocation>(
     longitude: {
       type: Number,
     },
+    notificationTitle: {
+      type: String,
+    },
+    email: {
+      type: String,
+    },
+    scheduleLink: {
+      type: String,
+    },
+    website: {
+      type: String,
+    },
+    phoneNumber: {
+      type: String,
+    },
     userId: {
       type: Types.ObjectId,
       ref: "user",
