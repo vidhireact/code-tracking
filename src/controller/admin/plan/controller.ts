@@ -22,15 +22,16 @@ export default class Controller {
     price: Joi.number().required(),
     duration: Joi.number().required(),
     visits: Joi.number().required(),
-    service: Joi.string()
+    serviceId: Joi.string()
       .required()
-      .external(async (v: string) => {
-        if (!v) return v;
-        const service = await getServiceById(v);
-        if (!service) {
-          throw new Error("Please provide valid service for profile service.");
-        }
-        return v;
+      .external(async (value: [string]) => {
+        if (!value) throw new Error("Please provide valid serviceId.");
+        if (!value.length) throw new Error("Please provide valid serviceId.");
+        value.map(async (item) => {
+          const location = await getServiceById(item.toString());
+          if (!location) throw new Error("Please provide valid serviceId.");
+        });
+        return value;
       }),
   });
   private readonly updateSchema = Joi.object().keys({
@@ -53,18 +54,26 @@ export default class Controller {
   });
 
   protected readonly get = async (req: Request, res: Response) => {
-    const { planId } = req.params;
-    if (planId) {
-      const plan = await getPopulatedPlan(planId);
-      if (!plan) {
-        res.status(422).json({ message: "Invalid Plan." });
+    try {
+      const { planId } = req.params;
+      if (planId) {
+        const plan = await getPopulatedPlan(planId);
+        if (!plan) {
+          res.status(422).json({ message: "Invalid Plan." });
+          return;
+        }
+        res.status(200).json(plan);
         return;
       }
-      res.status(200).json(plan);
-      return;
+      const plans = await getPlan();
+      res.status(200).json(plans);
+    } catch (error) {
+      console.log("error", "error in get admin plan", error);
+      res.status(500).json({
+        message: "Hmm... Something went wrong. Please try again later.",
+        error: _get(error, "message"),
+      });
     }
-    const plans = await getPlan();
-    res.status(200).json(plans);
   };
 
   protected readonly create = async (req: Request, res: Response) => {

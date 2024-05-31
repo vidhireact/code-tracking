@@ -119,19 +119,27 @@ export default class Controller {
   });
 
   protected readonly get = async (req: Request, res: Response) => {
-    const { businessId } = req.params;
-    const authUser = req.authUser;
-    if (businessId) {
-      const business = await getPopulatedBusiness(businessId);
-      if (!business) {
-        res.status(422).json({ message: "Invalid Business." });
+    try {
+      const { businessId } = req.params;
+      const authUser = req.authUser;
+      if (businessId) {
+        const business = await getPopulatedBusiness(businessId);
+        if (!business) {
+          res.status(422).json({ message: "Invalid Business." });
+          return;
+        }
+        res.status(200).json(business);
         return;
       }
-      res.status(200).json(business);
-      return;
+      const businesses = await getBusinessByUserId(authUser._id.toString());
+      res.status(200).json(businesses);
+    } catch (error) {
+      console.log("error", "error in get admin business", error);
+      res.status(500).json({
+        message: "Hmm... Something went wrong. Please try again later.",
+        error: _get(error, "message"),
+      });
     }
-    const businesss = await getBusinessByUserId(authUser._id.toString());
-    res.status(200).json(businesss);
   };
 
   protected readonly create = async (req: Request, res: Response) => {

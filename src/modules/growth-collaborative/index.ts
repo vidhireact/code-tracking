@@ -7,3 +7,4 @@ export * from "./getGrowthCollaborativeByUserId";
 export * from "./getPopulatedGrowthCollaborative";
 export * from "./saveGrowthCollaborative";
 export * from "./updateGrowthCollaborative";
+export * from "./getGrowthCollaborativeForUser";

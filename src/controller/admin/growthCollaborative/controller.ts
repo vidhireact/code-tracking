@@ -39,20 +39,28 @@ export default class Controller {
   });
 
   protected readonly get = async (req: Request, res: Response) => {
-    const GrowthCollaborativeId = req.params._id;
-    if (GrowthCollaborativeId) {
-      const growthCollaborative = await getPopulatedGrowthCollaborative(
-        GrowthCollaborativeId
-      );
-      if (!growthCollaborative) {
-        res.status(422).json({ message: "Invalid GrowthCollaborative." });
+    try {
+      const { growthCollaborativeId } = req.params;
+      if (growthCollaborativeId) {
+        const growthCollaborative = await getPopulatedGrowthCollaborative(
+          growthCollaborativeId
+        );
+        if (!growthCollaborative) {
+          res.status(422).json({ message: "Invalid GrowthCollaborative." });
+          return;
+        }
+        res.status(200).json(growthCollaborative);
         return;
       }
-      res.status(200).json(growthCollaborative);
-      return;
+      const growthCollaborates = await getGrowthCollaborative();
+      res.status(200).json(growthCollaborates);
+    } catch (error) {
+      console.log("error", "error in get admin growthCollaborative", error);
+      res.status(500).json({
+        message: "Hmm... Something went wrong. Please try again later.",
+        error: _get(error, "message"),
+      });
     }
-    const growthCollaboratives = await getGrowthCollaborative();
-    res.status(200).json(growthCollaboratives);
   };
 
   protected readonly create = async (req: Request, res: Response) => {
@@ -95,7 +103,7 @@ export default class Controller {
   protected readonly update = async (req: Request, res: Response) => {
     try {
       const payload = req.body;
-      const growthCollaborativeId = req.params._id;
+      const { growthCollaborativeId } = req.params;
       if (!growthCollaborativeId) {
         res.status(422).json({ message: "Invalid GrowthCollaborative." });
         return;
@@ -141,7 +149,7 @@ export default class Controller {
 
   protected readonly delete = async (req: Request, res: Response) => {
     try {
-      const growthCollaborativeId = req.params._id;
+      const { growthCollaborativeId } = req.params;
       if (!growthCollaborativeId) {
         res.status(422).json({ message: "Invalid GrowthCollaborative." });
         return;

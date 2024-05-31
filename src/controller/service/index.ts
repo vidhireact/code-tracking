@@ -11,6 +11,6 @@ export default class Service extends Controller {
 
   private initializeRoutes() {
     this.router.get("/", this.get);
-    this.router.get("/:_id", this.get);
+    this.router.get("/:serviceId", this.get);
   }
 }

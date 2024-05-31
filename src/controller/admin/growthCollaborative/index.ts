@@ -11,9 +11,9 @@ export default class GrowthCollaborative extends Controller {
 
   private initializeRoutes() {
     this.router.post("", this.create);
-    this.router.patch("/:_id", this.update);
+    this.router.patch("/:growthCollaborativeId", this.update);
     this.router.get("/", this.get);
-    this.router.get("/:_id", this.get);
-    this.router.delete("/:_id", this.delete);
+    this.router.get("/:growthCollaborativeId", this.get);
+    this.router.delete("/:growthCollaborativeId", this.delete);
   }
 }

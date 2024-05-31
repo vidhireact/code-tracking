@@ -21,10 +21,12 @@ const plan = new Schema<IPlan>(
     visits: {
       type: Number,
     },
-    service: {
-      type: Types.ObjectId,
-      ref: "service",
-    },
+    serviceId: [
+      {
+        type: Types.ObjectId,
+        ref: "service",
+      },
+    ],
   },
   { timestamps: true }
 );

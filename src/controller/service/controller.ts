@@ -5,17 +5,25 @@ import { Request } from "../../request";
 
 export default class Controller {
   protected readonly get = async (req: Request, res: Response) => {
-    const ServiceId = req.params._id;
-    if (ServiceId) {
-      const service = await getServiceById(ServiceId);
-      if (!service) {
-        res.status(422).json({ message: "Invalid Service." });
+    try {
+      const { serviceId } = req.params;
+      if (serviceId) {
+        const service = await getServiceById(serviceId);
+        if (!service) {
+          res.status(422).json({ message: "Invalid Service." });
+          return;
+        }
+        res.status(200).json(service);
         return;
       }
-      res.status(200).json(service);
-      return;
+      const services = await getService();
+      res.status(200).json(services);
+    } catch (error) {
+      console.log("error", "error in get service", error);
+      res.status(500).json({
+        message: "Hmm... Something went wrong. Please try again later.",
+        error: _get(error, "message"),
+      });
     }
-    const services = await getService();
-    res.status(200).json(services);
   };
 }

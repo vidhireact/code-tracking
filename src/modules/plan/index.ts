@@ -6,3 +6,4 @@ export * from "./getPlanByService";
 export * from "./getPopulatedPlan";
 export * from "./savePlan";
 export * from "./updatePlan";
+export * from "./getPlanForUser";

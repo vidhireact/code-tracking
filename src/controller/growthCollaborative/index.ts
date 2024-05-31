@@ -11,6 +11,8 @@ export default class GrowthCollaborative extends Controller {
 
   private initializeRoutes() {
     this.router.get("/", this.get);
-    this.router.get("/:_id", this.get);
+    this.router.get("/:growthCollaborativeId", this.get);
+    this.router.get("/service/:serviceId", this.getGrowthCollaborativeByServiceId);
+
   }
 }

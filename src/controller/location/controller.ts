@@ -53,18 +53,26 @@ export default class Controller {
   });
 
   protected readonly get = async (req: Request, res: Response) => {
-    const { locationId } = req.params;
-    if (locationId) {
-      const location = await getLocationById(locationId);
-      if (!location) {
-        res.status(422).json({ message: "Invalid Location." });
+    try {
+      const { locationId } = req.params;
+      if (locationId) {
+        const location = await getLocationById(locationId);
+        if (!location) {
+          res.status(422).json({ message: "Invalid Location." });
+          return;
+        }
+        res.status(200).json(location);
         return;
       }
-      res.status(200).json(location);
-      return;
+      const locations = await getLocation();
+      res.status(200).json(locations);
+    } catch (error) {
+      console.log("error", "error in get location", error);
+      res.status(500).json({
+        message: "Hmm... Something went wrong. Please try again later.",
+        error: _get(error, "message"),
+      });
     }
-    const locations = await getLocation();
-    res.status(200).json(locations);
   };
 
   protected readonly create = async (req: Request, res: Response) => {

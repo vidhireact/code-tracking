@@ -13,7 +13,7 @@ export interface IPlan {
   duration: number; // In Days
   visits: number;
 
-  service: string | IService;
+  serviceId: (string | IService)[];
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -30,7 +30,7 @@ export class Plan implements IPlan {
   duration: number; // In Days
   visits: number;
 
-  service: string | IService;
+  serviceId: (string | IService)[];
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -45,7 +45,7 @@ export class Plan implements IPlan {
     this.price = input.price;
     this.duration = input.duration;
     this.visits = input.visits;
-    this.service = input.service;
+    this.serviceId = input.serviceId;
     this.createdAt = input.createdAt;
     this.updatedAt = input.updatedAt;
   }
