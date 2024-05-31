@@ -15,6 +15,9 @@ const growthCollaborative = new Schema<IGrowthCollaborative>(
     percentage: {
       type: Number,
     },
+    cutOFF: {
+      type: Number,
+    },
 
     service: {
       type: Types.ObjectId,

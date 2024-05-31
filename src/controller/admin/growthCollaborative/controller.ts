@@ -20,6 +20,7 @@ export default class Controller {
     description: Joi.string().required(),
     keyFeatures: Joi.string().required(),
     percentage: Joi.number().required(),
+    cutOFF: Joi.number().required(),
     service: Joi.string()
       .required()
       .external(async (v: string) => {
@@ -36,6 +37,7 @@ export default class Controller {
     description: Joi.string().optional(),
     keyFeatures: Joi.string().optional(),
     percentage: Joi.number().optional(),
+    cutOFF: Joi.number().optional(),
   });
 
   protected readonly get = async (req: Request, res: Response) => {

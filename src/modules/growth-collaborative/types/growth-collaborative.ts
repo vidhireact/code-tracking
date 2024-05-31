@@ -7,6 +7,7 @@ export interface IGrowthCollaborative {
   name: string;
   description: string;
 
+  cutOFF: number;
   keyFeatures: string;
   percentage: number;
 
@@ -21,6 +22,7 @@ export class GrowthCollaborative implements IGrowthCollaborative {
   name: string;
   description: string;
 
+  cutOFF: number;
   keyFeatures: string;
   percentage: number;
 
@@ -37,6 +39,7 @@ export class GrowthCollaborative implements IGrowthCollaborative {
     this.description = input.description;
     this.keyFeatures = input.keyFeatures;
     this.percentage = input.percentage;
+    this.cutOFF = input.cutOFF;
 
     this.service = input.service;
     this.createdAt = input.createdAt;
