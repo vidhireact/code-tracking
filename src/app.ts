@@ -9,6 +9,9 @@ import Admin from "./controller/admin";
 import { validateIsAdmin } from "./middleware/validateIsAdmin";
 import Location from "./controller/location";
 import Business from "./controller/business";
+import Service from "./controller/service";
+import Plan from "./controller/plan";
+import GrowthCollaborative from "./controller/growthCollaborative";
 
 export default class App {
   public static instance: Application;
@@ -58,5 +61,12 @@ export default class App {
     this.instance.use("/user", validateAuthIdToken, new User().router);
     this.instance.use("/location", validateAuthIdToken, new Location().router);
     this.instance.use("/business", validateAuthIdToken, new Business().router);
+    this.instance.use("/service", validateAuthIdToken, new Service().router);
+    this.instance.use("/plan", validateAuthIdToken, new Plan().router);
+    this.instance.use(
+      "/growth-collaborative",
+      validateAuthIdToken,
+      new GrowthCollaborative().router
+    );
   }
 }
