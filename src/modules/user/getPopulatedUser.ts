@@ -8,9 +8,11 @@ import { UserModel } from "./schema";
  * @returns return populated account
  */
 export const getPopulatedUser = async (_id: string) => {
-  const user: IUser = await UserModel.findById(_id).populate({
-    path: "billingAddressId",
+  const user: IUser = await UserModel.findById(_id)
+  .populate({
+    path: "preferredLocation",
     select: "-__v",
+    populate: [{ path: "serviceId", select: "-__v" }],
   });
 
   return user

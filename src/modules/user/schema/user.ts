@@ -51,6 +51,10 @@ const user = new Schema<IUser>(
       required: true,
       default: "USER",
     },
+    preferredLocationId: {
+      type: Types.ObjectId,
+      ref: "preferred-location",
+    },
   },
 
   { timestamps: true }

@@ -1,5 +1,6 @@
 import { isUndefined, omitBy } from "lodash";
 import { Types } from "mongoose";
+import { IPreferredLocation } from "../../preferred-location";
 
 export enum genderType {
   MALE = "MALE",
@@ -29,6 +30,7 @@ export interface IUser {
   profilePic?: string; // TODO Image
 
   userType: string;
+  preferredLocationId: string | IPreferredLocation;
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -61,6 +63,7 @@ export class User implements IUser {
   profilePic?: string; // TODO Image
 
   userType: string;
+  preferredLocationId: string | IPreferredLocation;
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -88,6 +91,7 @@ export class User implements IUser {
     this.profilePic = input.profilePic;
 
     this.userType = input.userType;
+    this.preferredLocationId = input.preferredLocationId;
 
     this.createdAt = input.createdAt;
     this.updatedAt = input.updatedAt;

@@ -9,8 +9,13 @@ import {
   getUserByEmail,
   getPopulatedUser,
   getUserByNumber,
+  updateUser,
 } from "../../modules/user";
 import { get as _get } from "lodash";
+import {
+  PreferredLocation,
+  savePreferredLocation,
+} from "../../modules/preferred-location";
 
 export default class Controller {
   private readonly loginSchema = Joi.object({
@@ -216,6 +221,25 @@ export default class Controller {
       const user = await saveUser(
         new User({
           ...payloadValue,
+        })
+      );
+
+      const preferredLocation = await savePreferredLocation(
+        new PreferredLocation({
+          range: 20,
+          rangeType: "KM",
+          address: user.address,
+          latitude: user.latitude,
+          longitude: user.longitude,
+          userId: user._id.toString(),
+          serviceId: null,
+        })
+      );
+
+      await updateUser(
+        new User({
+          ...user,
+          preferredLocationId: preferredLocation._id.toString(),
         })
       );
 

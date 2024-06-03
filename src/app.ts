@@ -13,6 +13,7 @@ import Service from "./controller/service";
 import Plan from "./controller/plan";
 import GrowthCollaborative from "./controller/growthCollaborative";
 import Subscription from "./controller/subscription";
+import PreferredLocation from "./controller/preferred-location";
 
 export default class App {
   public static instance: Application;
@@ -73,6 +74,11 @@ export default class App {
       "/subscription",
       validateAuthIdToken,
       new Subscription().router
+    );
+    this.instance.use(
+      "/preferred-location",
+      validateAuthIdToken,
+      new PreferredLocation().router
     );
   }
 }
