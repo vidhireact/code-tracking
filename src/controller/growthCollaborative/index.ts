@@ -10,9 +10,9 @@ export default class GrowthCollaborative extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get("/", this.get);
+    // this.router.get("/", this.get);
     this.router.get("/:growthCollaborativeId", this.get);
-    this.router.get("/service/:serviceId", this.getGrowthCollaborativeByServiceId);
+    this.router.post("/service/:serviceId", this.getGrowthCollaborativeByServiceId);
 
   }
 }

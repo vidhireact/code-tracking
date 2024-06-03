@@ -69,9 +69,9 @@ export default class Controller {
       .external((v: string) => {
         return AES.encrypt(v, process.env.JWT_PASSWORD_SECRET).toString();
       }),
-    address: Joi.string().optional(),
-    latitude: Joi.number().optional(),
-    longitude: Joi.number().optional(),
+    address: Joi.string().required(),
+    latitude: Joi.number().required(),
+    longitude: Joi.number().required(),
   });
 
   private readonly duplicateSchema = Joi.object({

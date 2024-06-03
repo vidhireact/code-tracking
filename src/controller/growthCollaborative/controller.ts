@@ -2,12 +2,29 @@ import { Response } from "express";
 import { get as _get } from "lodash";
 import {
   getGrowthCollaborativeByServiceId,
-  getGrowthCollaborativeForUser,
   getPopulatedGrowthCollaborative,
 } from "../../modules/growth-collaborative";
 import { Request } from "../../request";
+import { getServiceById } from "../../modules/service";
+import Joi from "joi";
+import { getPlanById } from "../../modules/plan";
 
 export default class Controller {
+  private readonly validatePlanSchema = Joi.object().keys({
+    planIds: Joi.array()
+      .required()
+      .items(Joi.string())
+      .external((value) => {
+        if (!value) return;
+        if (!value.length) return;
+        value.map(async (item) => {
+          const plan = await getPlanById(item.toString());
+          if (!plan) throw new Error("Please provide valid Plan.");
+        });
+        return value;
+      }),
+  });
+
   protected readonly get = async (req: Request, res: Response) => {
     try {
       const { growthCollaborativeId } = req.params;
@@ -39,16 +56,35 @@ export default class Controller {
   ) => {
     try {
       const { serviceId } = req.params;
-
+      const payload = req.body;
       if (!serviceId) {
-        const plans = await getGrowthCollaborativeForUser();
-        res.status(200).json(plans);
-        return;
-      } else {
-        const plans = await getGrowthCollaborativeByServiceId(serviceId);
-        res.status(200).json(plans);
+        res.status(422).json({ message: "Invalid Service." });
         return;
       }
+
+      const payloadValue = await this.validatePlanSchema
+        .validateAsync(payload)
+        .then((value) => {
+          return value;
+        })
+        .catch((e) => {
+          console.log(e);
+          res.status(422).json({ message: e.message });
+          return;
+        });
+      if (!payloadValue) {
+        return;
+      }
+
+      const service = await getServiceById(serviceId);
+      if (!service) {
+        res.status(422).json({ message: "Invalid Service." });
+        return;
+      }
+
+      const plans = await getGrowthCollaborativeByServiceId(serviceId);
+      res.status(200).json(plans);
+      return;
     } catch (error) {
       console.log("error", "error in get plan by service id", error);
       res.status(500).json({
