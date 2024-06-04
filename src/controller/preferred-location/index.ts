@@ -10,6 +10,6 @@ export default class PreferredLocation extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.patch("/:preferredLocationId", this.update);
+    this.router.post("/:preferredLocationId", this.update);
   }
 }

@@ -16,9 +16,9 @@ export default class Controller {
   private readonly updateSchema = Joi.object().keys({
     range: Joi.number().optional(),
     rangeType: Joi.string().optional().valid("KM", " MILE"),
-    address: Joi.string().required(),
-    latitude: Joi.number().required(),
-    longitude: Joi.number().required(),
+    address: Joi.string().optional(),
+    latitude: Joi.number().optional(),
+    longitude: Joi.number().optional(),
     serviceId: Joi.string()
       .optional()
       .external(async (v: string) => {

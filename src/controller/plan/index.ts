@@ -10,9 +10,15 @@ export default class Plan extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get("/", this.get);
+    // this.router.get("/", this.get);
     this.router.get("/:planId", this.get);
-    this.router.get("/active/service/:serviceId", this.getPlanByServiceId);
-    this.router.get("/recommend/service/:serviceId", this.getPlanByServiceId);
+    this.router.get(
+      "/active/service/:serviceId",
+      this.getActivePlanByServiceId
+    );
+    this.router.get(
+      "/recommend/service/:serviceId",
+      this.getRecommendByServiceId
+    );
   }
 }
