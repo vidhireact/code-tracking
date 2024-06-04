@@ -32,7 +32,7 @@ export default class Controller {
       .required(),
     businessId: Joi.string()
       .required()
-      .external(async (value) => {
+      .external(async (value: string) => {
         const business = await getBusinessById(value.toString());
         if (!business) throw new Error("Please provide valid Business.");
         return value;

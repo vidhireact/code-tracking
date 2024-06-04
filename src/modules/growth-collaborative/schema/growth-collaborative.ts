@@ -19,10 +19,12 @@ const growthCollaborative = new Schema<IGrowthCollaborative>(
       type: Number,
     },
 
-    service: {
-      type: Types.ObjectId,
-      ref: "service",
-    },
+    serviceId: [
+      {
+        type: Types.ObjectId,
+        ref: "service",
+      },
+    ],
   },
   { timestamps: true }
 );

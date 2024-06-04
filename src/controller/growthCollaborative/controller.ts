@@ -14,13 +14,15 @@ export default class Controller {
     planIds: Joi.array()
       .required()
       .items(Joi.string())
-      .external((value) => {
+      .external(async (value) => {
         if (!value) return;
         if (!value.length) return;
-        value.map(async (item) => {
-          const plan = await getPlanById(item.toString());
-          if (!plan) throw new Error("Please provide valid Plan.");
-        });
+        for await (const item of value) {
+          const plan = await getPlanById(item);
+          if (!plan) {
+            throw new Error("Please provide valid Plan.");
+          }
+        }
         return value;
       }),
   });

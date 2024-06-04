@@ -22,15 +22,18 @@ export default class Controller {
     price: Joi.number().required(),
     duration: Joi.number().required(),
     visits: Joi.number().required(),
-    serviceId: Joi.string()
+    serviceId: Joi.array()
+      .items(Joi.string())
       .required()
       .external(async (value: [string]) => {
-        if (!value) throw new Error("Please provide valid serviceId.");
-        if (!value.length) throw new Error("Please provide valid serviceId.");
-        value.map(async (item) => {
-          const location = await getServiceById(item.toString());
-          if (!location) throw new Error("Please provide valid serviceId.");
-        });
+        if (!value) throw new Error("Please provide valid service.");
+        if (!value.length) throw new Error("Please provide valid service.");
+        for await (const item of value) {
+          const service = await getServiceById(item);
+          if (!service) {
+            throw new Error("Please provide valid service.");
+          }
+        }
         return value;
       }),
   });

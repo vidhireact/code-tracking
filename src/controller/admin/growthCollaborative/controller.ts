@@ -21,15 +21,19 @@ export default class Controller {
     keyFeatures: Joi.string().required(),
     percentage: Joi.number().required(),
     cutOFF: Joi.number().required(),
-    service: Joi.string()
+    serviceId: Joi.array()
+      .items(Joi.string())
       .required()
-      .external(async (v: string) => {
-        if (!v) return v;
-        const service = await getServiceById(v);
-        if (!service) {
-          throw new Error("Please provide valid service for profile service.");
+      .external(async (value: [string]) => {
+        if (!value) throw new Error("Please provide valid service.");
+        if (!value.length) throw new Error("Please provide valid service.");
+        for await (const item of value) {
+          const service = await getServiceById(item);
+          if (!service) {
+            throw new Error("Please provide valid service.");
+          }
         }
-        return v;
+        return value;
       }),
   });
   private readonly updateSchema = Joi.object().keys({

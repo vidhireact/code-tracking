@@ -1,5 +1,5 @@
 import { Response } from "express";
-
+import * as fs from "fs";
 import Joi from "joi";
 import { get as _get } from "lodash";
 import {
@@ -21,7 +21,7 @@ export default class Controller {
   private readonly createSchema = Joi.object().keys({
     name: Joi.string().required(),
     description: Joi.string().required(),
-    email: Joi.string().required(),
+    email: Joi.string().email().required(),
     phoneNumber: Joi.string()
       .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
       .required(),
@@ -32,18 +32,26 @@ export default class Controller {
         if (!v) return v;
         const service = await getServiceById(v);
         if (!service) {
-          throw new Error("Please provide valid service for profile service.");
+          throw new Error("Please provide valid  service.");
         }
         return v;
       }),
     growthCollaborativeId: Joi.string()
       .required()
-      .external(async (v: string) => {
+      .external(async (v: string, helpers) => {
         if (!v) return v;
         const growthCollaborative = await getGrowthCollaborativeById(v);
         if (!growthCollaborative) {
+          throw new Error("Please provide valid growthCollaborative.");
+        }
+        const serviceId = helpers.state.ancestors[0].service;
+        if (
+          !growthCollaborative.serviceId.find(
+            (item) => item.toString() === serviceId
+          )
+        ) {
           throw new Error(
-            "Please provide valid growthCollaborative for profile growthCollaborative."
+            "Please provide valid service related to growthCollaborative plan."
           );
         }
         return v;
@@ -51,25 +59,34 @@ export default class Controller {
     locationIds: Joi.array()
       .required()
       .items(Joi.string())
-      .external((value) => {
+      .external(async (value) => {
         if (!value) return;
         if (!value.length) return;
-        value.map(async (item) => {
-          const location = await getLocationById(item.toString());
-          if (!location) throw new Error("Please provide valid location.");
-        });
+        for await (const item of value) {
+          const location = await getLocationById(item);
+          if (!location) {
+            throw new Error("Please provide valid location.");
+          }
+        }
         return value;
       }),
     planIds: Joi.array()
       .required()
       .items(Joi.string())
-      .external((value) => {
+      .external(async (value, helpers) => {
+        const serviceId = helpers.state.ancestors[0].service;
         if (!value) return;
         if (!value.length) return;
-        value.map(async (item) => {
-          const plan = await getPlanById(item.toString());
-          if (!plan) throw new Error("Please provide valid Plan.");
-        });
+        for await (const item of value) {
+          const plan = await getPlanById(item);
+          if (!plan) {
+            throw new Error("Please provide valid Plan.");
+          } else {
+            if (!plan.serviceId.find((item) => item.toString() === serviceId)) {
+              throw new Error("Please provide valid service related to plan.");
+            }
+          }
+        }
         return value;
       }),
   });
@@ -82,38 +99,18 @@ export default class Controller {
       .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
       .required(),
     logo: Joi.string().optional(),
-    service: Joi.string()
-      .optional()
-      .external(async (v: string) => {
-        if (!v) return v;
-        const service = await getServiceById(v);
-        if (!service) {
-          throw new Error("Please provide valid service for profile service.");
-        }
-        return v;
-      }),
     locationIds: Joi.array()
       .optional()
       .items(Joi.string())
-      .external((value) => {
+      .external(async (value) => {
         if (!value) return;
         if (!value.length) return;
-        value.map(async (item) => {
-          const location = await getLocationById(item.toString());
-          if (!location) throw new Error("Please provide valid location.");
-        });
-        return value;
-      }),
-    planIds: Joi.array()
-      .optional()
-      .items(Joi.string())
-      .external((value) => {
-        if (!value) return;
-        if (!value.length) return;
-        value.map(async (item) => {
-          const plan = await getPlanById(item.toString());
-          if (!plan) throw new Error("Please provide valid Plan.");
-        });
+        for await (const item of value) {
+          const location = await getLocationById(item);
+          if (!location) {
+            throw new Error("Please provide valid location.");
+          }
+        }
         return value;
       }),
   });

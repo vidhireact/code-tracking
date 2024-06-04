@@ -10,7 +10,7 @@ import { UserModel } from "./schema";
 export const getPopulatedUser = async (_id: string) => {
   const user: IUser = await UserModel.findById(_id)
   .populate({
-    path: "preferredLocation",
+    path: "preferredLocationId",
     select: "-__v",
     populate: [{ path: "serviceId", select: "-__v" }],
   });

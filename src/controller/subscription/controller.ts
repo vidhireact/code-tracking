@@ -51,25 +51,29 @@ export default class Controller {
     locationIds: Joi.array()
       .required()
       .items(Joi.string())
-      .external((value) => {
+      .external(async (value) => {
         if (!value) return;
         if (!value.length) return;
-        value.map(async (item) => {
-          const location = await getLocationById(item.toString());
-          if (!location) throw new Error("Please provide valid location.");
-        });
+        for await (const item of value) {
+          const location = await getLocationById(item);
+          if (!location) {
+            throw new Error("Please provide valid location.");
+          }
+        }
         return value;
       }),
     planIds: Joi.array()
       .required()
       .items(Joi.string())
-      .external((value) => {
+      .external(async (value) => {
         if (!value) return;
         if (!value.length) return;
-        value.map(async (item) => {
-          const plan = await getPlanById(item.toString());
-          if (!plan) throw new Error("Please provide valid Plan.");
-        });
+        for await (const item of value) {
+          const plan = await getPlanById(item);
+          if (!plan) {
+            throw new Error("Please provide valid Plan.");
+          }
+        }
         return value;
       }),
   });
@@ -93,27 +97,31 @@ export default class Controller {
         return v;
       }),
     locationIds: Joi.array()
-      .optional()
+      .required()
       .items(Joi.string())
-      .external((value) => {
+      .external(async (value) => {
         if (!value) return;
         if (!value.length) return;
-        value.map(async (item) => {
-          const location = await getLocationById(item.toString());
-          if (!location) throw new Error("Please provide valid location.");
-        });
+        for await (const item of value) {
+          const location = await getLocationById(item);
+          if (!location) {
+            throw new Error("Please provide valid location.");
+          }
+        }
         return value;
       }),
     planIds: Joi.array()
-      .optional()
+      .required()
       .items(Joi.string())
-      .external((value) => {
+      .external(async (value) => {
         if (!value) return;
         if (!value.length) return;
-        value.map(async (item) => {
-          const plan = await getPlanById(item.toString());
-          if (!plan) throw new Error("Please provide valid Plan.");
-        });
+        for await (const item of value) {
+          const plan = await getPlanById(item);
+          if (!plan) {
+            throw new Error("Please provide valid Plan.");
+          }
+        }
         return value;
       }),
   });
