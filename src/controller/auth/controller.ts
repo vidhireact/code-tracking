@@ -189,7 +189,8 @@ export default class Controller {
 
   protected readonly session = async (req: Request, res: Response) => {
     try {
-      res.status(200).json(req.authUser);
+      const populatedUser = await getPopulatedUser(req.authUser._id);
+      res.status(200).json(populatedUser);
     } catch (error) {
       console.log("error", "error at get session#################### ", error);
 
