@@ -1,6 +1,7 @@
 import { isUndefined, omitBy } from "lodash";
 import { Types } from "mongoose";
 import { IService } from "../../service";
+import { IUser } from "../../user";
 
 export interface IPlan {
   _id?: string;
@@ -14,6 +15,7 @@ export interface IPlan {
   visits: number;
 
   serviceId: (string | IService)[];
+  likedBy?: (string | IUser)[];
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -31,6 +33,7 @@ export class Plan implements IPlan {
   visits: number;
 
   serviceId: (string | IService)[];
+  likedBy?: (string | IUser)[];
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -46,6 +49,7 @@ export class Plan implements IPlan {
     this.duration = input.duration;
     this.visits = input.visits;
     this.serviceId = input.serviceId;
+    this.likedBy = input.likedBy;
     this.createdAt = input.createdAt;
     this.updatedAt = input.updatedAt;
   }

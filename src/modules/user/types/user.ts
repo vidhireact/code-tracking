@@ -1,6 +1,7 @@
 import { isUndefined, omitBy } from "lodash";
 import { Types } from "mongoose";
 import { IPreferredLocation } from "../../preferred-location";
+import { IPlan } from "../../plan";
 
 export enum genderType {
   MALE = "MALE",
@@ -31,6 +32,8 @@ export interface IUser {
 
   userType: string;
   preferredLocationId: string | IPreferredLocation;
+
+  likedPlan?: (string | IPlan)[];
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -64,6 +67,7 @@ export class User implements IUser {
 
   userType: string;
   preferredLocationId: string | IPreferredLocation;
+  likedPlan?: (string | IPlan)[];
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -92,6 +96,7 @@ export class User implements IUser {
 
     this.userType = input.userType;
     this.preferredLocationId = input.preferredLocationId;
+    this.likedPlan = input.likedPlan;
 
     this.createdAt = input.createdAt;
     this.updatedAt = input.updatedAt;

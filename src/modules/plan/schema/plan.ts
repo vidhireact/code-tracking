@@ -27,6 +27,12 @@ const plan = new Schema<IPlan>(
         ref: "service",
       },
     ],
+    likedBy: [
+      {
+        type: Types.ObjectId,
+        ref: "user",
+      },
+    ],
   },
   { timestamps: true }
 );

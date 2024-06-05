@@ -55,6 +55,12 @@ const user = new Schema<IUser>(
       type: Types.ObjectId,
       ref: "preferred-location",
     },
+    likedPlan: [
+      {
+        type: Types.ObjectId,
+        ref: "plan",
+      },
+    ],
   },
 
   { timestamps: true }

@@ -20,5 +20,6 @@ export default class Plan extends Controller {
       "/recommend/service/:serviceId",
       this.getRecommendByServiceId
     );
+    this.router.patch("/like/plan", this.updateLikedPlan);
   }
 }
