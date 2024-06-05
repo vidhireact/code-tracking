@@ -13,114 +13,59 @@ import {
 } from "../../modules/subscription";
 import { Request } from "../../request";
 import { getServiceById } from "../../modules/service";
-import { getGrowthCollaborativeById } from "../../modules/growth-collaborative";
-import { getLocationById } from "../../modules/location";
 import { getPlanById } from "../../modules/plan";
+import { getBusinessById } from "../../modules/business";
+import moment from "moment";
 
 export default class Controller {
   private readonly createSchema = Joi.object().keys({
-    name: Joi.string().required(),
-    description: Joi.string().required(),
-    email: Joi.string().required(),
-    phoneNumber: Joi.string()
-      .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
-      .required(),
-    logo: Joi.string().required(),
-    service: Joi.string()
+    serviceId: Joi.string()
       .required()
-      .external(async (v: string) => {
-        if (!v) return v;
-        const service = await getServiceById(v);
+      .external(async (value: string) => {
+        if (!value) return value;
+        const service = await getServiceById(value);
         if (!service) {
-          throw new Error("Please provide valid service for profile service.");
+          throw new Error("Please provide valid service.");
         }
-        return v;
+        return value;
       }),
-    growthCollaborativeId: Joi.string()
+    planId: Joi.string()
       .required()
-      .external(async (v: string) => {
-        if (!v) return v;
-        const growthCollaborative = await getGrowthCollaborativeById(v);
-        if (!growthCollaborative) {
+      .external(async (value: string, helpers) => {
+        const serviceId = helpers.state.ancestors[0].serviceId;
+
+        if (!value) return;
+        const plan = await getPlanById(value);
+        if (!plan) {
+          throw new Error("Please provide valid Plan.");
+        }
+        if (!plan.serviceId.find((item) => item.toString() === serviceId)) {
           throw new Error(
-            "Please provide valid growthCollaborative for profile growthCollaborative."
+            "Please provide valid service related to plan / change plan."
           );
         }
-        return v;
-      }),
-    locationIds: Joi.array()
-      .required()
-      .items(Joi.string())
-      .external(async (value) => {
-        if (!value) return;
-        if (!value.length) return;
-        for await (const item of value) {
-          const location = await getLocationById(item);
-          if (!location) {
-            throw new Error("Please provide valid location.");
-          }
-        }
         return value;
       }),
-    planIds: Joi.array()
-      .required()
-      .items(Joi.string())
-      .external(async (value) => {
-        if (!value) return;
-        if (!value.length) return;
-        for await (const item of value) {
-          const plan = await getPlanById(item);
-          if (!plan) {
-            throw new Error("Please provide valid Plan.");
-          }
-        }
-        return value;
-      }),
+    // locationId: Joi.string()
+    //   .required()
+    //   .external(async (value: string) => {
+    //     if (!value) return;
+    //     const location = await getLocationById(value);
+    //     if (!location) {
+    //       throw new Error("Please provide valid location.");
+    //     }
+    //     return value;
+    //   }),
   });
 
   private readonly updateSchema = Joi.object().keys({
-    name: Joi.string().optional(),
-    description: Joi.string().optional(),
-    email: Joi.string().required(),
-    phoneNumber: Joi.string()
-      .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
-      .required(),
-    logo: Joi.string().optional(),
-    service: Joi.string()
-      .optional()
-      .external(async (v: string) => {
-        if (!v) return v;
-        const service = await getServiceById(v);
+    businessId: Joi.string()
+      .required()
+      .external(async (value: string) => {
+        if (!value) return value;
+        const service = await getBusinessById(value);
         if (!service) {
-          throw new Error("Please provide valid service for profile service.");
-        }
-        return v;
-      }),
-    locationIds: Joi.array()
-      .required()
-      .items(Joi.string())
-      .external(async (value) => {
-        if (!value) return;
-        if (!value.length) return;
-        for await (const item of value) {
-          const location = await getLocationById(item);
-          if (!location) {
-            throw new Error("Please provide valid location.");
-          }
-        }
-        return value;
-      }),
-    planIds: Joi.array()
-      .required()
-      .items(Joi.string())
-      .external(async (value) => {
-        if (!value) return;
-        if (!value.length) return;
-        for await (const item of value) {
-          const plan = await getPlanById(item);
-          if (!plan) {
-            throw new Error("Please provide valid Plan.");
-          }
+          throw new Error("Please provide valid Business.");
         }
         return value;
       }),
@@ -139,10 +84,10 @@ export default class Controller {
         res.status(200).json(subscription);
         return;
       }
-      const subscriptiones = await getSubscriptionByUserId(
+      const subscriptions = await getSubscriptionByUserId(
         authUser._id.toString()
       );
-      res.status(200).json(subscriptiones);
+      res.status(200).json(subscriptions);
     } catch (error) {
       console.log("error", "error in get admin subscription", error);
       res.status(500).json({
@@ -170,10 +115,14 @@ export default class Controller {
         return;
       }
 
+      const plan = await getPlanById(payloadValue.planId);
+
       const subscription = await saveSubscription(
         new Subscription({
           ...payloadValue,
           userId: authUser._id.toString(),
+          startDate: moment(),
+          endDate: moment().add(plan.duration, "d"),
         })
       );
 
@@ -203,6 +152,10 @@ export default class Controller {
         return;
       }
 
+      if (subscription.associated || subscription.businessId) {
+        res.status(422).json({ message: "Already Associated." });
+        return;
+      }
       if (subscription.userId.toString() !== authUser._id.toString()) {
         res.status(401).json({ message: "Unauthorized." });
         return;
@@ -222,8 +175,34 @@ export default class Controller {
         return;
       }
 
+      const plan = await getPlanById(subscription.planId.toString());
+      if (!plan) {
+        res.status(422).json({ message: "Plan closed." });
+        return;
+      }
+
+      const business = await getBusinessById(payloadValue.businessId);
+      if (!business) {
+        res.status(422).json({ message: "Business closed." });
+        return;
+      }
+      console.log({ business });
+      if (
+        !business.planIds.find(
+          (item) => item.toString() === subscription.planId.toString()
+        )
+      ) {
+        res.status(422).json({ message: "Business closed / Plan updated." });
+        return;
+      }
+
       const updatedSubscription = await updateSubscription(
-        new Subscription({ ...subscription.toJSON(), ...payloadValue })
+        new Subscription({
+          ...subscription.toJSON(),
+          ...payloadValue,
+          associated: true,
+          associatedDate: moment(),
+        })
       );
 
       res.status(200).json(updatedSubscription);

@@ -11,7 +11,7 @@ export default class Subscription extends Controller {
 
   private initializeRoutes() {
     this.router.post("", this.create);
-    this.router.patch("/:subscriptionId", this.update);
+    this.router.patch("/associate/:subscriptionId", this.update);
     this.router.get("/", this.get);
     this.router.get("/:subscriptionId", this.get);
     this.router.delete("/:subscriptionId", this.delete);

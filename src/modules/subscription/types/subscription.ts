@@ -11,7 +11,7 @@ export interface ISubscription {
 
   userId: string | IUser;
   planId: string | IPlan;
-  businessId: string | IBusiness;
+  businessId?: string | IBusiness;
   locationId: string | ILocation;
   serviceId: string | IService;
 
@@ -30,7 +30,7 @@ export class Subscription implements ISubscription {
 
   userId: string | IUser;
   planId: string | IPlan;
-  businessId: string | IBusiness;
+  businessId?: string | IBusiness;
   locationId: string | ILocation;
   serviceId: string | IService;
 
