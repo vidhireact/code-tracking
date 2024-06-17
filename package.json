@@ -48,6 +48,7 @@
     "moment": "^2.29.3",
     "moment-timezone": "^0.5.40",
     "mongoose": "^6.12.0",
+    "stripe": "^15.9.0",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^1.1.8",
     "validator": "^13.11.0"

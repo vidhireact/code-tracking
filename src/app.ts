@@ -14,6 +14,7 @@ import Plan from "./controller/plan";
 import GrowthCollaborative from "./controller/growthCollaborative";
 import Subscription from "./controller/subscription";
 import PreferredLocation from "./controller/preferred-location";
+import Stripe from "./controller/stripe";
 
 export default class App {
   public static instance: Application;
@@ -80,5 +81,6 @@ export default class App {
       validateAuthIdToken,
       new PreferredLocation().router
     );
+    this.instance.use("/payment", validateAuthIdToken, new Stripe().router);
   }
 }
