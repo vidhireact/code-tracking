@@ -12,7 +12,7 @@ export enum genderType {
 
 export interface IUser {
   _id?: string;
-  fistName: string;
+  firstName: string;
   lastName: string;
   phoneNumber?: string;
   isPhoneVerified?: boolean;
@@ -47,7 +47,7 @@ export interface UserDefaults {
 
 export class User implements IUser {
   _id?: string;
-  fistName: string;
+  firstName: string;
   lastName: string;
   phoneNumber: string;
   isPhoneVerified?: boolean;
@@ -76,7 +76,7 @@ export class User implements IUser {
     this._id = input._id
       ? input._id.toString()
       : new Types.ObjectId().toString();
-    this.fistName = input.fistName;
+    this.firstName = input.firstName;
     this.lastName = input.lastName;
     this.phoneNumber = input.phoneNumber;
     this.isPhoneVerified = input.isPhoneVerified;

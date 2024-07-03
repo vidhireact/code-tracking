@@ -3,7 +3,7 @@ import { IUser } from "../types";
 
 const user = new Schema<IUser>(
   {
-    fistName: {
+    firstName: {
       type: String,
     },
     lastName: {
