@@ -19,3 +19,6 @@ walletStorage/
 
 package-lock.json
 yarn.lock
+
+
+tmpServer.ts
