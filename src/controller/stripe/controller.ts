@@ -5,6 +5,28 @@ import { stripeInstance } from "../../utils/stripe";
 export default class Controller {
   protected readonly checkout = async (req: Request, res: Response) => {
     try {
+      const { products } = req.body;
+      console.log(products);
+
+      const lineItems = products.map((product) => ({
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: product.dish,
+          },
+          unit_amount: product.price * 100,
+        },
+        quantity: product.qnty,
+      }));
+
+      const session = await stripeInstance().checkout.sessions.create({
+        payment_method_types: ["card"],
+        line_items: lineItems,
+        mode: "payment",
+        success_url: "http://localhost:3000/plans",
+        cancel_url: "http://localhost:3000/plans",
+      });
+
       // const { data: priceData } = await stripeInstance().prices.list({
       //   active: true,
       //   limit: 100,
@@ -37,7 +59,10 @@ export default class Controller {
       //     customer: user.stripeAccount,
       //   });
 
-      res.status(200).json({ message: "success" });
+      res.status(200).json({
+        id: session.id,
+        message: "success",
+      });
     } catch (e) {
       // Display error on client
       return res.send({ error: e.message });
