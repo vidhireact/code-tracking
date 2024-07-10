@@ -6,13 +6,12 @@ export default class Controller {
   protected readonly checkout = async (req: Request, res: Response) => {
     try {
       const { products } = req.body;
-      console.log(products);
 
       const lineItems = products.map((product) => ({
         price_data: {
           currency: "usd",
           product_data: {
-            name: product.dish,
+            name: product.name,
           },
           unit_amount: product.price * 100,
         },
@@ -23,8 +22,8 @@ export default class Controller {
         payment_method_types: ["card"],
         line_items: lineItems,
         mode: "payment",
-        success_url: "http://localhost:3000/plans",
-        cancel_url: "http://localhost:3000/plans",
+        success_url: `${process.env.FRONTEND_URL}/plans`,
+        cancel_url: `${process.env.FRONTEND_URL}/plans`,
       });
 
       // const { data: priceData } = await stripeInstance().prices.list({
