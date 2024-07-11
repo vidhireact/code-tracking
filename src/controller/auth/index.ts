@@ -20,5 +20,6 @@ export default class Auth extends Controller {
     );
     this.router.post("/register", this.register);
     this.router.post("/logout", validateAuthIdToken, this.logout);
+    this.router.post("/loginWithGoogle", this.loginWithGoogle)
   }
 }

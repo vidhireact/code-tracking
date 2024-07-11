@@ -2,6 +2,7 @@ import { AES, enc } from "crypto-js";
 import { Response } from "express";
 import { Request } from "./../../request";
 import Joi from "joi";
+import admin from "../../config/firebase"
 import {
   IUser,
   User,
@@ -88,6 +89,22 @@ export default class Controller {
         return v;
       }),
   });
+
+  private readonly signupWithGoogle = Joi.object({
+    name: Joi.string().required(),
+    email: Joi.string()
+      .email()
+      .required()
+      .external(async (v: string) => {
+        const user: IUser = await getUserByEmail(v);
+        if (user) {
+          throw new Error(
+            "This email address is already associated with another account. Please use a different email address."
+          );
+        }
+        return v;
+      })
+  })
 
   protected readonly login = async (req: Request, res: Response) => {
     try {
@@ -296,4 +313,116 @@ export default class Controller {
       });
     }
   };
+
+  protected readonly loginWithGoogle = async (req: Request, res: Response) => {
+    try {
+      const idToken = req.body.idToken;
+
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+
+      const { email, name, firebase } = decodedToken;
+     
+      const dataVerify = await admin.auth().getUserByEmail(email).catch(error => {
+        if (error.code === 'auth/user-not-found') {
+          return null; 
+        } else {
+          throw error; 
+        }
+      });
+
+      if (!dataVerify) {
+        return res.status(400).json({ message: 'Email not found in Firebase Authentication' });
+      }
+
+      const userEmail = await getUserByEmail(email);
+
+      if (userEmail) {
+
+        const isGoogleLogin = firebase.sign_in_provider === 'google.com';
+        const isFacebookLogin = firebase.sign_in_provider === 'facebook.com';
+        const isAppleLogin = firebase.sign_in_provider === 'apple.com';
+
+        if (isGoogleLogin && !userEmail.isGoogleLogin) {
+          return res.status(403).json({ message: 'User did not sign up with Google' });
+        
+        }else if (isFacebookLogin && !userEmail.isFacebookLogin) {
+          return res.status(403).json({ message: 'User did not sign up with Facebook' });
+        
+        }else if (isAppleLogin && !userEmail.isAppleLogin) {
+          return res.status(403).json({ message: 'User did not sign up with Apple' });
+        }
+
+        const token = AES.encrypt(userEmail._id.toString(), process.env.AES_KEY).toString();
+
+        if (User.adminTypes.includes(userEmail.userType)) {
+          res.cookie("admin_auth", token, { signed: true });
+        }
+
+        res.cookie("auth", token, { signed: true })
+          .status(200)
+          .setHeader("x-auth-token", token)
+          .json(userEmail);
+
+      } else {
+
+        const payload = { email, name };
+
+        try {
+          await this.signupWithGoogle.validateAsync(payload);
+        } catch (error) {
+          return res.status(422).json({ message: error.message });
+        }
+
+        const newUser = {
+          firstName: name.split(' ')[0],
+          lastName: name.split(' ').slice(1).join(' '),
+          email: email,
+          isSocialLogin: true,
+          isGoogleLogin: firebase.sign_in_provider === 'google.com',
+          isFacebookLogin: firebase.sign_in_provider === 'facebook.com',
+          isAppleLogin: firebase.sign_in_provider === 'apple.com'
+
+        };
+
+        const user = await saveUser(
+          new User({
+            ...newUser
+          })
+        );
+
+        if (!user) {
+          return res.status(401).json({
+            message: "Entered email has not been registered in executavia account!",
+          });
+        }
+
+        const populatedUser = await getPopulatedUser(user._id);
+
+        const token = AES.encrypt(
+          user._id.toString(),
+          process.env.AES_KEY
+        ).toString();
+
+        if (User.adminTypes.includes(populatedUser.userType)) {
+          res.cookie("admin_auth", token, {
+            signed: true,
+          });
+        }
+        res
+          .cookie("auth", token, {
+            signed: true,
+          })
+          .status(200)
+          .setHeader("x-auth-token", token)
+          .json(populatedUser);
+      }
+
+    } catch (error) {
+      console.log("error", "error in signup", error);
+      res.status(500).json({
+        message: "Hmm... Something went wrong. Please try again later.",
+        error: _get(error, "message"),
+      });
+    }
+  }
 }

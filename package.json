@@ -43,6 +43,8 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.2",
     "express-http-context": "^1.2.4",
+    "firebase": "^10.12.3",
+    "firebase-admin": "^12.2.0",
     "joi": "^17.12.3",
     "lodash": "^4.17.21",
     "moment": "^2.29.3",
