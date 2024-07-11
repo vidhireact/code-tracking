@@ -20,7 +20,7 @@ export interface IUser {
   email: string;
   isEmailVerified?: boolean;
 
-  password: string;
+  password?: string;
 
   address?: string;
   latitude?: number;
@@ -30,13 +30,18 @@ export interface IUser {
 
   profilePic?: string; // TODO Image
 
-  userType: string;
-  preferredLocationId: string | IPreferredLocation;
+  userType?: string;
+  preferredLocationId?: string | IPreferredLocation;
 
   likedPlan?: (string | IPlan)[];
-
+ 
   createdAt?: Date;
   updatedAt?: Date;
+
+  isSocialLogin?: Boolean;
+  isGoogleLogin?: Boolean;
+  isFacebookLogin?: Boolean;
+  isAppleLogin?: Boolean;
 }
 
 export interface UserDefaults {
@@ -49,13 +54,13 @@ export class User implements IUser {
   _id?: string;
   firstName: string;
   lastName: string;
-  phoneNumber: string;
+  phoneNumber?: string;
   isPhoneVerified?: boolean;
 
   email: string;
   isEmailVerified?: boolean;
 
-  password: string;
+  password?: string;
 
   address?: string;
   latitude?: number;
@@ -65,12 +70,17 @@ export class User implements IUser {
 
   profilePic?: string; // TODO Image
 
-  userType: string;
+  userType?: string;
   preferredLocationId: string | IPreferredLocation;
   likedPlan?: (string | IPlan)[];
 
   createdAt?: Date;
   updatedAt?: Date;
+
+  isSocialLogin?: Boolean;
+  isGoogleLogin?: Boolean;
+  isFacebookLogin?: Boolean;
+  isAppleLogin?: Boolean;
 
   constructor(input?: IUser) {
     this._id = input._id
@@ -100,6 +110,11 @@ export class User implements IUser {
 
     this.createdAt = input.createdAt;
     this.updatedAt = input.updatedAt;
+
+    this.isSocialLogin = input.isSocialLogin;
+    this.isGoogleLogin = input.isGoogleLogin;
+    this.isFacebookLogin = input.isFacebookLogin;
+    this.isAppleLogin = input.isAppleLogin;
   }
 
   static adminTypes = ["ADMIN"];
