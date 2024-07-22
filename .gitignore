@@ -14,11 +14,13 @@ creadential/
 
 .env
 
+creadential/
 
 *.zip
 
 package-lock.json
 yarn.lock
 
+src/TeServer.ts
 
 tmpServer.ts

@@ -3,12 +3,12 @@ import { Types } from "mongoose";
 import { IPreferredLocation } from "../../preferred-location";
 import { IPlan } from "../../plan";
 
-export enum genderType {
+/* export enum genderType {
   MALE = "MALE",
   FEMALE = "FEMALE",
   OTHER = "OTHER",
   NOT_SPECIFIED = "NOT_SPECIFIED",
-}
+} */
 
 export interface IUser {
   _id?: string;
@@ -38,10 +38,10 @@ export interface IUser {
   createdAt?: Date;
   updatedAt?: Date;
 
-  isSocialLogin?: Boolean;
-  isGoogleLogin?: Boolean;
-  isFacebookLogin?: Boolean;
-  isAppleLogin?: Boolean;
+  isSocialLogin?: boolean;
+  isGoogleLogin?: boolean;
+  isFacebookLogin?: boolean;
+  isAppleLogin?: boolean;
 }
 
 export interface UserDefaults {
@@ -77,10 +77,10 @@ export class User implements IUser {
   createdAt?: Date;
   updatedAt?: Date;
 
-  isSocialLogin?: Boolean;
-  isGoogleLogin?: Boolean;
-  isFacebookLogin?: Boolean;
-  isAppleLogin?: Boolean;
+  isSocialLogin?: boolean;
+  isGoogleLogin?: boolean;
+  isFacebookLogin?: boolean;
+  isAppleLogin?: boolean;
 
   constructor(input?: IUser) {
     this._id = input._id

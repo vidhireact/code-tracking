@@ -123,7 +123,7 @@ export default class Controller {
         return;
       }
 
-      let user = await getUserByEmail(payloadValue.email);
+      const user = await getUserByEmail(payloadValue.email);
       if (!user) {
         res.status(401).json({
           message:

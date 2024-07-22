@@ -5,6 +5,7 @@ import { IPlan } from "../../plan";
 import { ILocation } from "../../location";
 import { IGrowthCollaborative } from "../../growth-collaborative";
 import { IUser } from "../../user";
+import { waitWhileIUser } from "../../waitWhileUser/types";
 
 export interface IBusiness {
   _id?: string;
@@ -22,6 +23,8 @@ export interface IBusiness {
   locationIds: (string | ILocation)[];
 
   userId: string | IUser;
+
+  waitWhileUserId: (string | waitWhileIUser)[];
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -44,6 +47,8 @@ export class Business implements IBusiness {
 
   userId: string | IUser;
 
+  waitWhileUserId: (string | waitWhileIUser)[];
+
   createdAt?: Date;
   updatedAt?: Date;
 
@@ -65,6 +70,8 @@ export class Business implements IBusiness {
     this.locationIds = input.locationIds;
 
     this.userId = input.userId;
+
+    this.waitWhileUserId = input.waitWhileUserId;
 
     this.createdAt = input.createdAt;
     this.updatedAt = input.updatedAt;

@@ -42,6 +42,10 @@ const business = new Schema<IBusiness>(
       type: Types.ObjectId,
       ref: "user",
     },
+    waitWhileUserId: [{
+      type: Types.ObjectId,
+      ref: "waiwhileUser"
+    }]
   },
   {
     timestamps: true,
