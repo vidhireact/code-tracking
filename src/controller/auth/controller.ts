@@ -2,7 +2,7 @@ import { AES, enc } from "crypto-js";
 import { Response } from "express";
 import { Request } from "./../../request";
 import Joi from "joi";
-import admin from "../../config/firebase"
+import admin from "../../config/firebase";
 import {
   IUser,
   User,
@@ -103,8 +103,8 @@ export default class Controller {
           );
         }
         return v;
-      })
-  })
+      }),
+  });
 
   protected readonly login = async (req: Request, res: Response) => {
     try {
@@ -321,50 +321,60 @@ export default class Controller {
       const decodedToken = await admin.auth().verifyIdToken(idToken);
 
       const { email, name, firebase } = decodedToken;
-     
-      const dataVerify = await admin.auth().getUserByEmail(email).catch(error => {
-        if (error.code === 'auth/user-not-found') {
-          return null; 
-        } else {
-          throw error; 
-        }
-      });
+
+      const dataVerify = await admin
+        .auth()
+        .getUserByEmail(email)
+        .catch((error) => {
+          if (error.code === "auth/user-not-found") {
+            return null;
+          } else {
+            throw error;
+          }
+        });
 
       if (!dataVerify) {
-        return res.status(400).json({ message: 'Email not found in Firebase Authentication' });
+        return res
+          .status(400)
+          .json({ message: "Email not found in Firebase Authentication" });
       }
 
       const userEmail = await getUserByEmail(email);
 
       if (userEmail) {
-
-        const isGoogleLogin = firebase.sign_in_provider === 'google.com';
-        const isFacebookLogin = firebase.sign_in_provider === 'facebook.com';
-        const isAppleLogin = firebase.sign_in_provider === 'apple.com';
+        const isGoogleLogin = firebase.sign_in_provider === "google.com";
+        const isFacebookLogin = firebase.sign_in_provider === "facebook.com";
+        const isAppleLogin = firebase.sign_in_provider === "apple.com";
 
         if (isGoogleLogin && !userEmail.isGoogleLogin) {
-          return res.status(403).json({ message: 'User did not sign up with Google' });
-        
-        }else if (isFacebookLogin && !userEmail.isFacebookLogin) {
-          return res.status(403).json({ message: 'User did not sign up with Facebook' });
-        
-        }else if (isAppleLogin && !userEmail.isAppleLogin) {
-          return res.status(403).json({ message: 'User did not sign up with Apple' });
+          return res
+            .status(403)
+            .json({ message: "User did not sign up with Google" });
+        } else if (isFacebookLogin && !userEmail.isFacebookLogin) {
+          return res
+            .status(403)
+            .json({ message: "User did not sign up with Facebook" });
+        } else if (isAppleLogin && !userEmail.isAppleLogin) {
+          return res
+            .status(403)
+            .json({ message: "User did not sign up with Apple" });
         }
 
-        const token = AES.encrypt(userEmail._id.toString(), process.env.AES_KEY).toString();
+        const token = AES.encrypt(
+          userEmail._id.toString(),
+          process.env.AES_KEY
+        ).toString();
 
         if (User.adminTypes.includes(userEmail.userType)) {
           res.cookie("admin_auth", token, { signed: true });
         }
 
-        res.cookie("auth", token, { signed: true })
+        res
+          .cookie("auth", token, { signed: true })
           .status(200)
           .setHeader("x-auth-token", token)
           .json(userEmail);
-
       } else {
-
         const payload = { email, name };
 
         try {
@@ -374,25 +384,25 @@ export default class Controller {
         }
 
         const newUser = {
-          firstName: name.split(' ')[0],
-          lastName: name.split(' ').slice(1).join(' '),
+          firstName: name.split(" ")[0],
+          lastName: name.split(" ").slice(1).join(" "),
           email: email,
           isSocialLogin: true,
-          isGoogleLogin: firebase.sign_in_provider === 'google.com',
-          isFacebookLogin: firebase.sign_in_provider === 'facebook.com',
-          isAppleLogin: firebase.sign_in_provider === 'apple.com'
-
+          isGoogleLogin: firebase.sign_in_provider === "google.com",
+          isFacebookLogin: firebase.sign_in_provider === "facebook.com",
+          isAppleLogin: firebase.sign_in_provider === "apple.com",
         };
 
         const user = await saveUser(
           new User({
-            ...newUser
+            ...newUser,
           })
         );
 
         if (!user) {
           return res.status(401).json({
-            message: "Entered email has not been registered in executavia account!",
+            message:
+              "Entered email has not been registered in executavia account!",
           });
         }
 
@@ -416,7 +426,6 @@ export default class Controller {
           .setHeader("x-auth-token", token)
           .json(populatedUser);
       }
-
     } catch (error) {
       console.log("error", "error in signup", error);
       res.status(500).json({
@@ -424,5 +433,5 @@ export default class Controller {
         error: _get(error, "message"),
       });
     }
-  }
+  };
 }
