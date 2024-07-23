@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { isUndefined, omitBy } from "lodash";
 import { IBusiness } from "../../business";
 
 export interface waitWhileIUser {
@@ -25,4 +26,8 @@ export class waitwhileUser implements waitWhileIUser {
         this.businessId = input.businessId;
         this.roles = input.roles;
     }
+
+    toJSON(): waitWhileIUser {
+        return omitBy(this, isUndefined) as waitWhileIUser;
+      }
 }

@@ -25,4 +25,4 @@ const user = new Schema<waitWhileIUser>(
   }
 );
 
-export const waitWhileUser = model<waitWhileIUser>("wait-while-user", user);
+export const waitWhileUserModel = model<waitWhileIUser>("wait-while-user", user);

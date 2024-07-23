@@ -1,4 +1,5 @@
 import { Response } from "express";
+import axios from "axios";
 import Joi from "joi";
 import { get as _get } from "lodash";
 import {
@@ -15,6 +16,13 @@ import { getServiceById } from "../../modules/service";
 import { getGrowthCollaborativeById } from "../../modules/growth-collaborative";
 import { getLocationById } from "../../modules/location";
 import { getPlanById } from "../../modules/plan";
+import {
+  waitwhileUser,
+  saveWaitWhileUser,
+  getWaitWhileUserByEmail,
+  updateWaitWhileUser,
+} from "../../modules/waitWhileUser";
+import { AES } from "crypto-js";
 
 export default class Controller {
   private readonly waitWhileUserSchema = Joi.object().keys({
@@ -95,7 +103,7 @@ export default class Controller {
         }
         return value;
       }),
-    waitWhileUser: Joi.array().items(this.waitWhileUserSchema),
+    waitWhileUser: this.waitWhileUserSchema,
   });
 
   private readonly updateSchema = Joi.object().keys({
@@ -164,18 +172,17 @@ export default class Controller {
         return;
       }
 
-      console.log(payloadValue);
-
       const waitWhileApiKey = process.env.WAIT_WHILE_KEY;
 
       const options = {
+        url: "https://api.waitwhile.com/v2/locations?includeUsers=false&includeLabels=false&includeResources=false&includeServices=false&includeDataFields=false&makeDefault=false",
         method: "POST",
         headers: {
           accept: "application/json",
           "content-type": "application/json",
           apikey: `${waitWhileApiKey}`,
         },
-        body: JSON.stringify({
+        data: JSON.stringify({
           labels: [],
           name: payloadValue.name,
           isBookingActive: true,
@@ -183,39 +190,60 @@ export default class Controller {
         }),
       };
 
-      const response = await fetch(
-        "https://api.waitwhile.com/v2/locations?includeUsers=false&includeLabels=false&includeResources=false&includeServices=false&includeDataFields=false&makeDefault=false",
-        options
-      );
-      const responseLocation = await response.json();
-      console.log(responseLocation.id);
+      const response = await axios(options);
 
-      const detailUser = payloadValue.waitWhileUser[0];
+      const detailUser = payloadValue.waitWhileUser;
 
-      console.log(detailUser);
-
-      const user = await fetch("https://api.waitwhile.com/v2/users", {
+      const option = {
+        url: "https://api.waitwhile.com/v2/users",
         method: "POST",
         headers: {
           accept: "application/json",
           "content-type": "application/json",
           apikey: `${waitWhileApiKey}`,
         },
-        body: JSON.stringify({
+        data: JSON.stringify({
           email: detailUser.email,
           password: detailUser.password,
-          locationIds: [responseLocation.id],
+          locationIds: [response.data.id],
           roles: detailUser.roles,
         }),
+      };
+
+      await axios(option);
+
+      const password = AES.encrypt(
+        payloadValue.waitWhileUser.password,
+        process.env.AES_KEY
+      ).toString();
+
+      await saveWaitWhileUser(
+        new waitwhileUser({
+          ...payloadValue.waitWhileUser,
+          password: password
+        })
+      ).catch((e) => {
+        console.log(e);
+        res.status(422).json({ message: e.message });
+        return;
       });
 
-      const responseUser = await user.json();
-      console.log(responseUser);
+      const getWaitWhileUser = await getWaitWhileUserByEmail(
+        payloadValue.waitWhileUser.email
+      );
 
       const business = await saveBusiness(
         new Business({
           ...payloadValue,
+          waitWhileUserId: [getWaitWhileUser._id],
           userId: authUser._id.toString(),
+        })
+      );
+
+      await updateWaitWhileUser(
+        new waitwhileUser({
+          ...getWaitWhileUser,
+          businessId: business._id,
         })
       );
 
