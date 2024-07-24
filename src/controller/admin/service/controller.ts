@@ -1,7 +1,7 @@
 import { Response } from "express";
-
+import axios from "axios";
 import Joi from "joi";
-import { get as _get } from "lodash";
+import { get as _get, method } from "lodash";
 import {
   getService,
   getServiceById,
@@ -60,6 +60,24 @@ export default class Controller {
       if (!payloadValue) {
         return;
       }
+
+      const waitWhileApiKey = process.env.WAIT_WHILE_KEY;
+
+      const option = {
+        url: "https://api.waitwhile.com/v2/services",
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          apikey: `${waitWhileApiKey}`,
+        },
+        data: JSON.stringify({
+          name: payloadValue.name,
+          locationIds: [process.env.WAIT_WHILE_BUSINESS_ID]
+        })
+      }
+
+      await axios(option);
 
       const service = await saveService(
         new Service({

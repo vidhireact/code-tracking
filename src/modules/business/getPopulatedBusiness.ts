@@ -17,6 +17,10 @@ export const getPopulatedBusiness = async (_id: string) => {
     .populate({
       path: "locationIds",
       select: "-__v",
+    })
+    .populate({
+      path: "waitWhileUserId",
+      select: "-__v",
     });
 
   return business ? new Business(business) : null;

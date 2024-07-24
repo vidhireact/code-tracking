@@ -3,6 +3,9 @@ import { waitWhileIUser } from "../types";
 
 const user = new Schema<waitWhileIUser>(
   {
+    name: {
+      type: String
+    },
     email: {
       type: String,
       required: true,

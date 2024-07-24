@@ -4,3 +4,4 @@ export * from "./types";
 export * from "./getUsers";
 export * from "./getUserByEmail";
 export * from "./updateUser";
+export * from "./getUserById";

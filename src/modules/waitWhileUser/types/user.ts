@@ -4,6 +4,7 @@ import { IBusiness } from "../../business";
 
 export interface waitWhileIUser {
     _id?: string;
+    name: string;
     email: string;
     password: string;
     businessId: string | IBusiness;
@@ -12,6 +13,7 @@ export interface waitWhileIUser {
 
 export class waitwhileUser implements waitWhileIUser {
     _id?: string;
+    name: string;
     email: string;
     password: string;
     businessId: string | IBusiness;
@@ -21,6 +23,7 @@ export class waitwhileUser implements waitWhileIUser {
         this._id = input._id
         ? input._id.toString()
             : new Types.ObjectId().toString();
+        this.name = input.name;
         this.email = input.email;
         this.password = input.password;
         this.businessId = input.businessId;

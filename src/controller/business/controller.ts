@@ -26,11 +26,12 @@ import { AES } from "crypto-js";
 
 export default class Controller {
   private readonly waitWhileUserSchema = Joi.object().keys({
+    name: Joi.string().required(),
     email: Joi.string().email().required(),
     password: Joi.string()
       .required()
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/),
-    roles: Joi.array().items(Joi.string()).required(),
+    roles: Joi.array().items(Joi.string()).required().max(4),
   });
   private readonly createSchema = Joi.object().keys({
     name: Joi.string().required(),
@@ -203,6 +204,7 @@ export default class Controller {
           apikey: `${waitWhileApiKey}`,
         },
         data: JSON.stringify({
+          name: detailUser.name,
           email: detailUser.email,
           password: detailUser.password,
           locationIds: [response.data.id],

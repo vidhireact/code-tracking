@@ -15,6 +15,7 @@ import GrowthCollaborative from "./controller/growthCollaborative";
 import Subscription from "./controller/subscription";
 import PreferredLocation from "./controller/preferred-location";
 import Stripe from "./controller/stripe";
+import WaitWhile from "./controller/waitWhleUser"
 
 export default class App {
   public static instance: Application;
@@ -82,5 +83,6 @@ export default class App {
       new PreferredLocation().router
     );
     this.instance.use("/payment", validateAuthIdToken, new Stripe().router);
+    this.instance.use("/waitWhile-user", validateAuthIdToken, new WaitWhile().router);
   }
 }
