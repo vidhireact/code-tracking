@@ -1,7 +1,7 @@
 import { Response } from "express";
 import axios from "axios";
 import Joi from "joi";
-import { get as _get, method } from "lodash";
+import { get as _get } from "lodash";
 import {
   getService,
   getServiceById,
@@ -73,9 +73,9 @@ export default class Controller {
         },
         data: JSON.stringify({
           name: payloadValue.name,
-          locationIds: [process.env.WAIT_WHILE_BUSINESS_ID]
-        })
-      }
+          locationIds: [process.env.WAIT_WHILE_BUSINESS_ID],
+        }),
+      };
 
       await axios(option);
 

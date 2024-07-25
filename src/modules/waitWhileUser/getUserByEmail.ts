@@ -1,9 +1,7 @@
-import { waitwhileUser } from "./types"; 
+import { WaitWhileUser } from "./types";
 import { waitWhileUserModel } from "./schema";
 
 export const getWaitWhileUserByEmail = async (email: string) => {
-    const user = await waitWhileUserModel.findOne({
-        email: email
-    });
-    return user ? new waitwhileUser(user) : null;
-}
+  const waitWhileUser = await waitWhileUserModel.findOne({ email });
+  return waitWhileUser ? new WaitWhileUser(waitWhileUser) : null;
+};

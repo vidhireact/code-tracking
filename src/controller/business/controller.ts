@@ -17,7 +17,7 @@ import { getGrowthCollaborativeById } from "../../modules/growth-collaborative";
 import { getLocationById } from "../../modules/location";
 import { getPlanById } from "../../modules/plan";
 import {
-  waitwhileUser,
+  WaitWhileUser,
   saveWaitWhileUser,
   getWaitWhileUserByEmail,
   updateWaitWhileUser,
@@ -220,7 +220,7 @@ export default class Controller {
       ).toString();
 
       await saveWaitWhileUser(
-        new waitwhileUser({
+        new WaitWhileUser({
           ...payloadValue.waitWhileUser,
           password: password
         })
@@ -243,7 +243,7 @@ export default class Controller {
       );
 
       await updateWaitWhileUser(
-        new waitwhileUser({
+        new WaitWhileUser({
           ...getWaitWhileUser,
           businessId: business._id,
         })

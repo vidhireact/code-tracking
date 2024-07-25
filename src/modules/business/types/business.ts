@@ -5,7 +5,7 @@ import { IPlan } from "../../plan";
 import { ILocation } from "../../location";
 import { IGrowthCollaborative } from "../../growth-collaborative";
 import { IUser } from "../../user";
-import { waitWhileIUser } from "../../waitWhileUser/types";
+import { IWaitWhileUser } from "../../waitWhileUser/types";
 
 export interface IBusiness {
   _id?: string;
@@ -24,7 +24,7 @@ export interface IBusiness {
 
   userId: string | IUser;
 
-  waitWhileUserId: (string | waitWhileIUser)[];
+  waitWhileUserId: (string | IWaitWhileUser)[];
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -47,7 +47,7 @@ export class Business implements IBusiness {
 
   userId: string | IUser;
 
-  waitWhileUserId: (string | waitWhileIUser)[];
+  waitWhileUserId: (string | IWaitWhileUser)[];
 
   createdAt?: Date;
   updatedAt?: Date;

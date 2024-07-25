@@ -1,10 +1,10 @@
 import { Schema, model, Types } from "mongoose";
-import { waitWhileIUser } from "../types";
+import { IWaitWhileUser } from "../types";
 
-const user = new Schema<waitWhileIUser>(
+const user = new Schema<IWaitWhileUser>(
   {
     name: {
-      type: String
+      type: String,
     },
     email: {
       type: String,
@@ -28,4 +28,7 @@ const user = new Schema<waitWhileIUser>(
   }
 );
 
-export const waitWhileUserModel = model<waitWhileIUser>("wait-while-user", user);
+export const waitWhileUserModel = model<IWaitWhileUser>(
+  "wait-while-user",
+  user
+);

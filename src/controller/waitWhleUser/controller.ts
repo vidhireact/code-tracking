@@ -1,11 +1,11 @@
 import { Response } from "express";
 import { Request } from "./../../request";
 import Joi from "joi";
-import { get as _get } from "lodash";
+import { get as _get, uniqBy as _uniqBy } from "lodash";
 import axios from "axios";
 import { AES } from "crypto-js";
 import {
-  waitwhileUser,
+  WaitWhileUser,
   saveWaitWhileUser,
   getWaitWhileUserByEmail,
 } from "../../modules/waitWhileUser";
@@ -88,7 +88,7 @@ export default class Controller {
       ).toString();
 
       await saveWaitWhileUser(
-        new waitwhileUser({
+        new WaitWhileUser({
           ...payloadValue,
           password: password,
         })
@@ -100,14 +100,13 @@ export default class Controller {
 
       const newUser = await getWaitWhileUserByEmail(payloadValue.email);
 
-      const stringArray = getBusiness.waitWhileUserId.map((objectId) =>
-        objectId.toString()
-      );
-
       await updateBusiness(
         new Business({
           ...getBusiness,
-          waitWhileUserId: [...stringArray, newUser._id],
+          waitWhileUserId: _uniqBy(
+            [...getBusiness.waitWhileUserId, newUser._id],
+            (id) => id.toString()
+          ),
         })
       );
 

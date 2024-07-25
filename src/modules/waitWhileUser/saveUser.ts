@@ -1,7 +1,7 @@
-import { waitwhileUser } from "./types"; 
+import { WaitWhileUser } from "./types";
 import { waitWhileUserModel } from "./schema";
 
-export const saveWaitWhileUser = async (user: waitwhileUser) => {
-    await new waitWhileUserModel(user.toJSON()).save();
-    return waitwhileUser
-}
+export const saveWaitWhileUser = async (user: WaitWhileUser) => {
+  await new waitWhileUserModel(user.toJSON()).save();
+  return WaitWhileUser;
+};
