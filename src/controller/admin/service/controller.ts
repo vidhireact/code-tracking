@@ -64,7 +64,7 @@ export default class Controller {
       const waitWhileApiKey = process.env.WAIT_WHILE_KEY;
 
       const option = {
-        url: "https://api.waitwhile.com/v2/services",
+        url: `${process.env.WAITWHILE_BASE_URL}/services`,
         method: "POST",
         headers: {
           accept: "application/json",

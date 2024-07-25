@@ -27,11 +27,24 @@ import { AES } from "crypto-js";
 export default class Controller {
   private readonly waitWhileUserSchema = Joi.object().keys({
     name: Joi.string().required(),
-    email: Joi.string().email().required(),
+    email: Joi.string()
+      .email()
+      .required()
+      .external(async (v: string) => {
+        if(!v) return v;
+        const checkEmail = await getWaitWhileUserByEmail(v);
+        if(checkEmail){
+          throw new Error("Please provide valid waitWhile User Email");
+        }
+        return v;
+      }),
     password: Joi.string()
       .required()
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/),
-    roles: Joi.array().items(Joi.string()).required().max(4),
+    roles: Joi.array()
+      .items(Joi.string().valid("admin", "editor", "reader", "owner").lowercase())
+      .required()
+      .max(4),
   });
   private readonly createSchema = Joi.object().keys({
     name: Joi.string().required(),
@@ -176,7 +189,7 @@ export default class Controller {
       const waitWhileApiKey = process.env.WAIT_WHILE_KEY;
 
       const options = {
-        url: "https://api.waitwhile.com/v2/locations?includeUsers=false&includeLabels=false&includeResources=false&includeServices=false&includeDataFields=false&makeDefault=false",
+        url: `${process.env.WAITWHILE_BASE_URL}/locations?includeUsers=false&includeLabels=false&includeResources=false&includeServices=false&includeDataFields=false&makeDefault=false`,
         method: "POST",
         headers: {
           accept: "application/json",
@@ -196,7 +209,7 @@ export default class Controller {
       const detailUser = payloadValue.waitWhileUser;
 
       const option = {
-        url: "https://api.waitwhile.com/v2/users",
+        url: `${process.env.WAITWHILE_BASE_URL}/users`,
         method: "POST",
         headers: {
           accept: "application/json",
@@ -222,7 +235,7 @@ export default class Controller {
       await saveWaitWhileUser(
         new WaitWhileUser({
           ...payloadValue.waitWhileUser,
-          password: password
+          password: password,
         })
       ).catch((e) => {
         console.log(e);

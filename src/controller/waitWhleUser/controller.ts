@@ -19,11 +19,24 @@ export default class Controller {
   private readonly waitWhileUserSchema = Joi.object().keys({
     businessId: Joi.string().required(),
     name: Joi.string().required(),
-    email: Joi.string().email().required(),
+    email: Joi.string()
+      .email()
+      .required()
+      .external(async (v: string) => {
+        if (!v) return v;
+        const checkEmail = await getWaitWhileUserByEmail(v);
+        if (!checkEmail) {
+          throw new Error("Please provide valid waitWhile User Email");
+        }
+        return v;
+      }),
     password: Joi.string()
       .required()
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/),
-    roles: Joi.array().items(Joi.string()).required().max(4),
+    roles: Joi.array()
+      .items(Joi.string().valid("admin", "editor", "reader", "owner"))
+      .required()
+      .max(4),
   });
 
   protected readonly create = async (req: Request, res: Response) => {
@@ -45,10 +58,15 @@ export default class Controller {
 
       const waitWhileApiKey = process.env.WAIT_WHILE_KEY;
 
-      const getBusiness = await getBusinessById(payloadValue.businessId);
+      const getBusiness = await getBusinessById(payloadValue.businessId)
+
+      if(!getBusiness){
+        res.status(422).json({ message: "Invalid Business." });
+        return;
+      }
 
       const option = {
-        url: "https://api.waitwhile.com/v2/locations",
+        url: `${process.env.WAITWHILE_BASE_URL}/locations`,
         method: "GET",
         headers: {
           accept: "application/json",
@@ -64,7 +82,7 @@ export default class Controller {
       );
 
       const options = {
-        url: "https://api.waitwhile.com/v2/users",
+        url: `${process.env.WAITWHILE_BASE_URL}/users`,
         method: "POST",
         headers: {
           accept: "application/json",
