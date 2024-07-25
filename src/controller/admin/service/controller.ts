@@ -77,11 +77,12 @@ export default class Controller {
         }),
       };
 
-      await axios(option);
+      const response = await axios(option);
 
       const service = await saveService(
         new Service({
           ...payloadValue,
+          waitWhileServiceId: response.data.id,
         })
       );
 

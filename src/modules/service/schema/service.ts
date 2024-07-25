@@ -6,6 +6,9 @@ const service = new Schema<IService>(
     name: {
       type: String,
     },
+    waitWhileServiceId: {
+      type: String
+    },
     createdAt: {
       type: Date,
     },
