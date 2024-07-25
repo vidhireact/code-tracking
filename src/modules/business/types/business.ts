@@ -25,6 +25,8 @@ export interface IBusiness {
   userId: string | IUser;
 
   waitWhileUserId: (string | IWaitWhileUser)[];
+  waitWhileLocationId: string;
+  waitWhileScheduleLink: string;
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -48,6 +50,8 @@ export class Business implements IBusiness {
   userId: string | IUser;
 
   waitWhileUserId: (string | IWaitWhileUser)[];
+  waitWhileLocationId: string;
+  waitWhileScheduleLink: string;
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -72,6 +76,8 @@ export class Business implements IBusiness {
     this.userId = input.userId;
 
     this.waitWhileUserId = input.waitWhileUserId;
+    this.waitWhileLocationId = input.waitWhileLocationId;
+    this.waitWhileScheduleLink = input.waitWhileScheduleLink;
 
     this.createdAt = input.createdAt;
     this.updatedAt = input.updatedAt;

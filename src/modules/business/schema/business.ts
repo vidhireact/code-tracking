@@ -18,10 +18,12 @@ const business = new Schema<IBusiness>(
     phoneNumber: {
       type: String,
     },
-    service: {
-      type: Types.ObjectId,
-      ref: "service",
-    },
+    service: [
+      {
+        type: Types.ObjectId,
+        ref: "service",
+      },
+    ],
     planIds: [
       {
         type: Types.ObjectId,
@@ -42,10 +44,18 @@ const business = new Schema<IBusiness>(
       type: Types.ObjectId,
       ref: "user",
     },
-    waitWhileUserId: [{
-      type: Types.ObjectId,
-      ref: "wait-while-user"
-    }]
+    waitWhileUserId: [
+      {
+        type: Types.ObjectId,
+        ref: "wait-while-user",
+      },
+    ],
+    waitWhileLocationId: {
+      type: String
+    },
+    waitWhileScheduleLink: {
+      type: String
+    }
   },
   {
     timestamps: true,

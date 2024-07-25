@@ -31,9 +31,9 @@ export default class Controller {
       .email()
       .required()
       .external(async (v: string) => {
-        if(!v) return v;
+        if (!v) return v;
         const checkEmail = await getWaitWhileUserByEmail(v);
-        if(checkEmail){
+        if (checkEmail) {
           throw new Error("Please provide valid waitWhile User Email");
         }
         return v;
@@ -42,7 +42,9 @@ export default class Controller {
       .required()
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/),
     roles: Joi.array()
-      .items(Joi.string().valid("admin", "editor", "reader", "owner").lowercase())
+      .items(
+        Joi.string().valid("admin", "editor", "reader", "owner").lowercase()
+      )
       .required()
       .max(4),
   });
@@ -54,16 +56,16 @@ export default class Controller {
       .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
       .required(),
     logo: Joi.string().required(),
-    service: Joi.string()
-      .required()
-      .external(async (v: string) => {
+    service: Joi.array().items(
+      Joi.string().external(async (v: string) => {
         if (!v) return v;
         const service = await getServiceById(v);
         if (!service) {
           throw new Error("Please provide valid  service.");
         }
         return v;
-      }),
+      })
+    ),
     growthCollaborativeId: Joi.string()
       .required()
       .external(async (v: string, helpers) => {
@@ -74,9 +76,7 @@ export default class Controller {
         }
         const serviceId = helpers.state.ancestors[0].service;
         if (
-          !growthCollaborative.serviceId.find(
-            (item) => item.toString() === serviceId
-          )
+          !serviceId.every((id) => growthCollaborative.serviceId.includes(id))
         ) {
           throw new Error(
             "Please provide valid service related to growthCollaborative plan."
@@ -110,7 +110,7 @@ export default class Controller {
           if (!plan) {
             throw new Error("Please provide valid Plan.");
           } else {
-            if (!plan.serviceId.find((item) => item.toString() === serviceId)) {
+            if (!serviceId.every((id) => plan.serviceId.includes(id))) {
               throw new Error("Please provide valid service related to plan.");
             }
           }
@@ -251,6 +251,8 @@ export default class Controller {
         new Business({
           ...payloadValue,
           waitWhileUserId: [getWaitWhileUser._id],
+          waitWhileLocationId: response.data.id,
+          waitWhileScheduleLink: response.data.shortName,
           userId: authUser._id.toString(),
         })
       );
