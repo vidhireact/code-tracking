@@ -12,8 +12,8 @@ export default class Plan extends Controller {
   private initializeRoutes() {
     // this.router.get("/", this.get);
     this.router.get("/:planId", this.get);
-    this.router.post(
-      "/active/service",
+    this.router.get(
+      "/active/service/:serviceId",
       this.getActivePlanByServiceId
     );
     this.router.get(
