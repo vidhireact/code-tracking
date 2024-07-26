@@ -208,6 +208,27 @@ export default class Controller {
 
       const detailUser = payloadValue.waitWhileUser;
 
+      for (const id of payloadValue.service) {
+        const serviceDetails = await getServiceById(id);
+        if (!serviceDetails.waitWhileServiceId) {
+          res.status(422).json({ message: "Invalid WaitWhile Service." });
+          return;
+        }
+        const options = {
+          url: `${process.env.WAITWHILE_BASE_URL}/services/${serviceDetails.waitWhileServiceId}`,
+          method: "POST",
+          headers: {
+            accept: "application/json",
+            "content-type": "application/json",
+            apikey: `${waitWhileApiKey}`,
+          },
+          data: JSON.stringify({
+            addLocationIds: response.data.id,
+          }),
+        };
+        await axios(options);
+      }
+
       const option = {
         url: `${process.env.WAITWHILE_BASE_URL}/users`,
         method: "POST",
