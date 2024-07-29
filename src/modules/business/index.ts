@@ -6,3 +6,4 @@ export * from "./getBusinessByUserId";
 export * from "./getPopulatedBusiness";
 export * from "./saveBusiness";
 export * from "./updateBusiness";
+export * from "./getActivePlans";

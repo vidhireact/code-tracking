@@ -9,6 +9,7 @@ import {
   updateBusiness,
   getBusinessByUserId,
   getPopulatedBusiness,
+  getActivePlans,
   // deleteBusiness,
 } from "../../modules/business";
 import { Request } from "../../request";
@@ -142,6 +143,10 @@ export default class Controller {
         }
         return value;
       }),
+  });
+
+  private readonly activePlansArray = Joi.object().keys({
+    serviceIds: Joi.array().items(Joi.string()),
   });
 
   protected readonly get = async (req: Request, res: Response) => {
@@ -367,6 +372,49 @@ export default class Controller {
       res.status(200).json({ message: "Business is Deleted Successfully. " });
     } catch (error) {
       console.log("error", "error in Deleting Business", error);
+      res.status(500).json({
+        message: "Hmm... Something went wrong. Please try again later.",
+        error: _get(error, "message"),
+      });
+    }
+  };
+
+  protected readonly activePlans = async (req: Request, res: Response) => {
+    try {
+      const authUser = req.authUser;
+      const payload = req.body;
+
+      const payloadValue = await this.activePlansArray
+        .validateAsync(payload)
+        .then((value) => {
+          return value;
+        })
+        .catch((e) => {
+          console.log(e);
+          res.status(422).json({ message: e.message });
+          return;
+        });
+
+      if (!payloadValue) {
+        return;
+      }
+
+      const serviceId = payloadValue.serviceIds;
+
+      const plans = await getActivePlans({
+        page: 1,
+        limit: 20,
+        serviceId,
+        user: authUser,
+      });
+      
+      res.status(200).json(plans);
+    } catch (error) {
+      console.log(
+        "error",
+        "error in get business plan's by service id's",
+        error
+      );
       res.status(500).json({
         message: "Hmm... Something went wrong. Please try again later.",
         error: _get(error, "message"),

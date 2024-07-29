@@ -15,5 +15,6 @@ export default class Business extends Controller {
     this.router.get("/", this.get);
     this.router.get("/:businessId", this.get);
     this.router.delete("/:businessId", this.delete);
+    this.router.post("/active-plan", this.activePlans);
   }
 }
