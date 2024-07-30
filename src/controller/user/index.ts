@@ -11,5 +11,6 @@ export default class User extends Controller {
   private initializeRoutes() {
     this.router.post("/password_verification", this.passwordVerification);
     this.router.patch("/:userId", this.updateUser);
+    this.router.get("/:businessId", this.getUserByBusinessId)
   }
 }

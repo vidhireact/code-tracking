@@ -13,6 +13,8 @@ import {
   User,
 } from "../../modules/user";
 
+import { getWaitWhileUserByBusinessId } from "../../modules/waitWhileUser";
+
 export default class Controller {
   protected readonly updateUserSchema = Joi.object({
     firstName: Joi.string().optional(),
@@ -132,6 +134,26 @@ export default class Controller {
         error
       );
 
+      res.status(500).json({
+        message: "Hmm... Something went wrong. Please try again later.",
+        error: _get(error, "message"),
+      });
+    }
+  };
+
+  protected readonly getUserByBusinessId = async (req: Request, res: Response) => {
+    try {
+      const { businessId } = req.params;
+      if(!businessId){
+        res.status(422).json({ message: "Invalid Business ID." });
+        return;
+      }
+
+      const user = await getWaitWhileUserByBusinessId(businessId);
+      res.status(200).json(user);
+
+    } catch (error) {
+      console.log("error", "error in get getUserByBusinessId", error);
       res.status(500).json({
         message: "Hmm... Something went wrong. Please try again later.",
         error: _get(error, "message"),
