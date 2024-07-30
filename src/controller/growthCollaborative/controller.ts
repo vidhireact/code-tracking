@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { get as _get } from "lodash";
 import {
-  getGrowthCollaborativeByServiceId,
+  getGrowthCollaborativeByServiceArray,
   getPopulatedGrowthCollaborative,
 } from "../../modules/growth-collaborative";
 import { Request } from "../../request";
@@ -21,6 +21,20 @@ export default class Controller {
           const plan = await getPlanById(item);
           if (!plan) {
             throw new Error("Please provide valid Plan.");
+          }
+        }
+        return value;
+      }),
+    serviceIds: Joi.array()
+      .required()
+      .items(Joi.string())
+      .external(async (value) => {
+        if (!value) return;
+        if (!value.length) return;
+        for await (const item of value) {
+          const service = await getServiceById(item);
+          if (!service) {
+            throw new Error("Please provide valid service.");
           }
         }
         return value;
@@ -57,12 +71,13 @@ export default class Controller {
     res: Response
   ) => {
     try {
-      const { serviceId } = req.params;
+      // const { serviceId } = req.params;
+      const authUser = req.authUser;
       const payload = req.body;
-      if (!serviceId) {
-        res.status(422).json({ message: "Invalid Service." });
-        return;
-      }
+      // if (!serviceId) {
+      //   res.status(422).json({ message: "Invalid Service." });
+      //   return;
+      // }
 
       const payloadValue = await this.validatePlanSchema
         .validateAsync(payload)
@@ -78,13 +93,22 @@ export default class Controller {
         return;
       }
 
-      const service = await getServiceById(serviceId);
-      if (!service) {
-        res.status(422).json({ message: "Invalid Service." });
-        return;
-      }
+      // const service = await getServiceById(serviceId);
+      // if (!service) {
+      //   res.status(422).json({ message: "Invalid Service." });
+      //   return;
+      // }
 
-      const plans = await getGrowthCollaborativeByServiceId(serviceId);
+      // const plans = await getGrowthCollaborativeByServiceArray(serviceId);
+
+      const serviceId = payloadValue.serviceIds;
+
+      const plans = await getGrowthCollaborativeByServiceArray({
+        page: 1,
+        limit: 20,
+        serviceId,
+        user: authUser,
+      });
       res.status(200).json(plans);
       return;
     } catch (error) {

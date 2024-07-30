@@ -8,3 +8,4 @@ export * from "./getPopulatedGrowthCollaborative";
 export * from "./saveGrowthCollaborative";
 export * from "./updateGrowthCollaborative";
 export * from "./getGrowthCollaborativeForUser";
+export * from "./getGrowthCollaborativeByServiceArray";
