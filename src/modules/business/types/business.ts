@@ -13,7 +13,7 @@ export interface IBusiness {
   description: string;
   logo?: string;
 
-  service: string | IService;
+  serviceIds: (string | IService)[];
   email: string;
   phoneNumber: string;
 
@@ -38,7 +38,7 @@ export class Business implements IBusiness {
   description: string;
   logo?: string;
 
-  service: string | IService;
+  serviceIds: (string | IService)[];
   email: string;
   phoneNumber: string;
 
@@ -64,7 +64,7 @@ export class Business implements IBusiness {
     this.description = input.description;
     this.logo = input.logo;
 
-    this.service = input.service;
+    this.serviceIds = input.serviceIds;
     this.email = input.email;
     this.phoneNumber = input.phoneNumber;
 

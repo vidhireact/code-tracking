@@ -57,7 +57,7 @@ export default class Controller {
       .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
       .required(),
     logo: Joi.string().required(),
-    service: Joi.array().items(
+    serviceIds: Joi.array().items(
       Joi.string().external(async (v: string) => {
         if (!v) return v;
         const service = await getServiceById(v);
@@ -213,7 +213,7 @@ export default class Controller {
 
       const detailUser = payloadValue.waitWhileUser;
 
-      for (const id of payloadValue.service) {
+      for (const id of payloadValue.serviceIds) {
         const serviceDetails = await getServiceById(id);
         if (!serviceDetails.waitWhileServiceId) {
           res.status(422).json({ message: "Invalid WaitWhile Service." });

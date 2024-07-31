@@ -18,7 +18,7 @@ const business = new Schema<IBusiness>(
     phoneNumber: {
       type: String,
     },
-    service: [
+    serviceIds: [
       {
         type: Types.ObjectId,
         ref: "service",
