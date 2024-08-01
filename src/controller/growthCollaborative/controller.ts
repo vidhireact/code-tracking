@@ -17,13 +17,23 @@ export default class Controller {
       .external(async (value) => {
         if (!value) return;
         if (!value.length) return;
+        const allServices = new Set();
+        let priceSum = 0;
         for await (const item of value) {
           const plan = await getPlanById(item);
           if (!plan) {
             throw new Error("Please provide valid Plan.");
           }
+          priceSum += plan.price;
+          plan.serviceId.forEach((service) =>
+            allServices.add(service.toString())
+          );
         }
-        return value;
+        return {
+          planIds: value,
+          priceSum: priceSum,
+          allServices: Array.from(allServices),
+        };
       }),
     serviceIds: Joi.array()
       .required()
@@ -72,7 +82,6 @@ export default class Controller {
   ) => {
     try {
       // const { serviceId } = req.params;
-      const authUser = req.authUser;
       const payload = req.body;
       // if (!serviceId) {
       //   res.status(422).json({ message: "Invalid Service." });
@@ -99,18 +108,19 @@ export default class Controller {
       //   return;
       // }
 
-      // const plans = await getGrowthCollaborativeByServiceArray(serviceId);
+      // const plans = await getGrowthCollaborativeByService(serviceId);
 
-      const serviceId = payloadValue.serviceIds;
+      const serviceId = payloadValue.planIds.allServices;
+      const priceSum = payloadValue.planIds.priceSum;
 
       const plans = await getGrowthCollaborativeByServiceArray({
         page: 1,
         limit: 20,
         serviceId,
-        user: authUser,
+        priceSum,
       });
+
       res.status(200).json(plans);
-      return;
     } catch (error) {
       console.log("error", "error in get plan by service id", error);
       res.status(500).json({
