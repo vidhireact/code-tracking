@@ -1,6 +1,5 @@
 import { Types } from "mongoose";
 import { PlanModel } from "../plan";
-import { getPopulatedPreferredLocationById } from "../preferred-location";
 import { IUser } from "../user";
 
 export const getActivePlans = async ({
@@ -14,10 +13,6 @@ export const getActivePlans = async ({
   limit: number;
   serviceId: string[];
 }) => {
-  const preferredLocation = await getPopulatedPreferredLocationById(
-    user.preferredLocationId.toString()
-  );
-
   const skip = (page - 1) * limit;
 
   const plans = await PlanModel.aggregate([
@@ -35,102 +30,17 @@ export const getActivePlans = async ({
           },
           {
             $match: {
-              service: { $in: serviceId.map((id) => new Types.ObjectId(id)) },
-            },
-          },
-          {
-            $lookup: {
-              from: "locations",
-              localField: "locationIds",
-              foreignField: "_id",
-              as: "locationIds",
-              pipeline: [
-                {
-                  $addFields: {
-                    distance: {
-                      $multiply: [
-                        {
-                          $radiansToDegrees: {
-                            $acos: {
-                              $add: [
-                                {
-                                  $multiply: [
-                                    {
-                                      $sin: {
-                                        $degreesToRadians:
-                                          preferredLocation.latitude,
-                                      },
-                                    },
-                                    {
-                                      $sin: {
-                                        $degreesToRadians: "$latitude",
-                                      },
-                                    },
-                                  ],
-                                },
-                                {
-                                  $multiply: [
-                                    {
-                                      $cos: {
-                                        $degreesToRadians: {
-                                          $subtract: [
-                                            preferredLocation.longitude,
-                                            "$longitude",
-                                          ],
-                                        },
-                                      },
-                                    },
-                                    {
-                                      $cos: {
-                                        $degreesToRadians:
-                                          preferredLocation.latitude,
-                                      },
-                                    },
-                                    {
-                                      $cos: {
-                                        $degreesToRadians: "$latitude",
-                                      },
-                                    },
-                                  ],
-                                },
-                              ],
-                            },
-                          },
-                        },
-                        111.18957696,
-                      ],
-                    },
-                  },
-                },
-                {
-                  $match: {
-                    distance: {
-                      $lt: preferredLocation.range
-                        ? preferredLocation.range
-                        : 10,
-                    },
-                  },
-                },
-                {
-                  $sort: {
-                    distance: 1,
-                  },
-                },
-                {
-                  $project: {
-                    name: 1,
-                    address: 1,
-                    email: 1,
-                    scheduleLink: 1,
-                    website: 1,
-                    phoneNumber: 1,
-                    distance: 1,
-                  },
-                },
-              ],
+              serviceIds: {
+                $in: serviceId.map((id) => new Types.ObjectId(id)),
+              },
             },
           },
         ],
+      },
+    },
+    {
+      $match: {
+        serviceId: { $all: serviceId.map((id) => new Types.ObjectId(id)) },
       },
     },
     {
