@@ -75,7 +75,7 @@ export default class Controller {
         if (!growthCollaborative) {
           throw new Error("Please provide valid growthCollaborative.");
         }
-        const serviceId = helpers.state.ancestors[0].service;
+        const serviceId = helpers.state.ancestors[0].serviceIds;
         if (
           !serviceId.every((id) => growthCollaborative.serviceId.includes(id))
         ) {
@@ -103,7 +103,7 @@ export default class Controller {
       .required()
       .items(Joi.string())
       .external(async (value, helpers) => {
-        const serviceId = helpers.state.ancestors[0].service;
+        const serviceId = helpers.state.ancestors[0].serviceIds;
         if (!value) return;
         if (!value.length) return;
         for await (const item of value) {
