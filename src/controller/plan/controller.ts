@@ -9,6 +9,7 @@ import {
   getRecommendPlanByServiceId,
   updatePlan,
 } from "../../modules/plan";
+import { getServiceById } from "../../modules/service";
 import { Request } from "../../request";
 import { User, updateUser } from "../../modules/user";
 import Joi from "joi";
@@ -63,12 +64,20 @@ export default class Controller {
         res.status(200).json(plans);
         return;
       } else {
+        const serviceDetails = await getServiceById(serviceId);
+
+        if(!serviceDetails){
+          res.status(422).json({ message: "Invalid service." });
+          return;
+        }
+
         const plans = await getActivePlanByServiceId({
           page: 1,
           limit: 20,
           serviceId,
           user: authUser,
         });
+        
         res.status(200).json(plans);
         return;
       }
