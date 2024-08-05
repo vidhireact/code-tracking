@@ -17,34 +17,9 @@ export const getActivePlans = async ({
 
   const plans = await PlanModel.aggregate([
     {
-      $lookup: {
-        from: "businesses",
-        localField: "_id",
-        foreignField: "planIds",
-        as: "businessIds",
-        pipeline: [
-          {
-            $match: {
-              userId: { $ne: new Types.ObjectId(user._id) },
-            },
-          },
-          {
-            $match: {
-              serviceIds: {
-                $in: serviceId.map((id) => new Types.ObjectId(id)),
-              },
-            },
-          },
-        ],
-      },
-    },
-    {
       $match: {
         serviceId: { $all: serviceId.map((id) => new Types.ObjectId(id)) },
       },
-    },
-    {
-      $match: { businessIds: { $gt: [{ $size: "$businessIds" }, 0] } },
     },
     {
       $project: {
