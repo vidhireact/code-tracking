@@ -335,8 +335,29 @@ export default class Controller {
         return;
       }
 
+      const waitWhileApiKey = process.env.WAIT_WHILE_KEY;
+
+      const options = {
+        url: `${process.env.WAITWHILE_BASE_URL}/locations/${business.waitWhileLocationId}`,
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          apikey: `${waitWhileApiKey}`,
+        },
+        data: JSON.stringify({
+          name: payloadValue.name,
+        }),
+      };
+
+      const response = await axios(options);
+
       const updatedBusiness = await updateBusiness(
-        new Business({ ...business.toJSON(), ...payloadValue })
+        new Business({
+          ...business.toJSON(),
+          waitWhileScheduleLink: response.data.shortName,
+          ...payloadValue,
+        })
       );
 
       res.status(200).json(updatedBusiness);
@@ -407,7 +428,7 @@ export default class Controller {
         serviceId,
         user: authUser,
       });
-      
+
       res.status(200).json(plans);
     } catch (error) {
       console.log(
