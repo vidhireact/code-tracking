@@ -65,22 +65,6 @@ export default class Controller {
         return;
       }
 
-      const option = {
-        url: `${process.env.WAITWHILE_BASE_URL}/locations`,
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          "content-type": "application/json",
-          apikey: `${waitWhileApiKey}`,
-        },
-      };
-
-      const response = await axios(option);
-
-      const findId = await response.data.results.find(
-        (obj) => obj.name === getBusiness.name
-      );
-
       const options = {
         url: `${process.env.WAITWHILE_BASE_URL}/users`,
         method: "POST",
@@ -93,7 +77,7 @@ export default class Controller {
           name: payloadValue.name,
           email: payloadValue.email,
           password: payloadValue.password,
-          locationIds: [findId.id],
+          locationIds: [getBusiness.waitWhileLocationId],
           roles: payloadValue.roles,
         }),
       };
