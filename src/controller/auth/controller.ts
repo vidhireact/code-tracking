@@ -70,6 +70,7 @@ export default class Controller {
       .external((v: string) => {
         return AES.encrypt(v, process.env.JWT_PASSWORD_SECRET).toString();
       }),
+    serviceId: Joi.string().required(),
     address: Joi.string().required(),
     latitude: Joi.number().required(),
     longitude: Joi.number().required(),
@@ -250,7 +251,7 @@ export default class Controller {
           latitude: user.latitude,
           longitude: user.longitude,
           userId: user._id.toString(),
-          serviceId: null,
+          serviceId: payloadValue.serviceId,
         })
       );
 
