@@ -8,6 +8,7 @@ export interface IWaitWhileUser {
   email: string;
   password: string;
   businessId: string | IBusiness;
+  waitWhileUserId: string;
   roles: [string];
 }
 
@@ -17,6 +18,7 @@ export class WaitWhileUser implements IWaitWhileUser {
   email: string;
   password: string;
   businessId: string | IBusiness;
+  waitWhileUserId: string;
   roles: [string];
 
   constructor(input?: IWaitWhileUser) {
@@ -27,6 +29,7 @@ export class WaitWhileUser implements IWaitWhileUser {
     this.email = input.email;
     this.password = input.password;
     this.businessId = input.businessId;
+    this.waitWhileUserId = input.waitWhileUserId;
     this.roles = input.roles;
   }
 

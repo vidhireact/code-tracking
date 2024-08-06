@@ -1,5 +1,6 @@
 import { Schema, model, Types } from "mongoose";
 import { IWaitWhileUser } from "../types";
+import { string } from "joi";
 
 const user = new Schema<IWaitWhileUser>(
   {
@@ -22,6 +23,9 @@ const user = new Schema<IWaitWhileUser>(
       type: [String],
       required: true,
     },
+    waitWhileUserId: {
+      type: String
+    }
   },
   {
     timestamps: true,
