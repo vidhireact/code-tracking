@@ -77,7 +77,7 @@ export default class Controller {
         }
         const serviceId = helpers.state.ancestors[0].serviceIds;
         if (
-          !serviceId.every((id) => growthCollaborative.serviceId.includes(id))
+          !serviceId.some((id) => growthCollaborative.serviceId.includes(id))
         ) {
           throw new Error(
             "Please provide valid service related to growthCollaborative plan."
