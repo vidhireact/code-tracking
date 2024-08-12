@@ -2,7 +2,7 @@ import { AES, enc } from "crypto-js";
 import { Response } from "express";
 import { Request } from "./../../request";
 import Joi from "joi";
-import admin from "../../config/firebase";
+import { firebaseAdmin } from "../../helper/firebase";
 import {
   IUser,
   User,
@@ -319,11 +319,11 @@ export default class Controller {
     try {
       const idToken = req.body.idToken;
 
-      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const decodedToken = await firebaseAdmin.auth().verifyIdToken(idToken);
 
       const { email, name, firebase } = decodedToken;
 
-      const dataVerify = await admin
+      const dataVerify = await firebaseAdmin
         .auth()
         .getUserByEmail(email)
         .catch((error) => {
