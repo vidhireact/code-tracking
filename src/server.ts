@@ -2,9 +2,9 @@ import App from "./app";
 
 import { connectDb } from "./dbConnection";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const dotenv = require("dotenv");
+import dotenv from "dotenv";
 dotenv.config();
+
 process.env.TZ = "UTC";
 const serverPort = parseInt(process.env.PORT) || 3000;
 
