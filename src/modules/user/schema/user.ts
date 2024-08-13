@@ -1,6 +1,5 @@
 import { Schema, model, Types } from "mongoose";
 import { IUser } from "../types";
-import { boolean } from "joi";
 
 const user = new Schema<IUser>(
   {
@@ -13,7 +12,7 @@ const user = new Schema<IUser>(
     phoneNumber: {
       type: String,
       unique: true,
-     // required: true,
+      // required: true,
     },
     isPhoneVerified: {
       type: Boolean,
@@ -30,7 +29,7 @@ const user = new Schema<IUser>(
     },
     password: {
       type: String,
-     // required: true,
+      // required: true,
     },
     address: {
       type: String,
@@ -64,20 +63,20 @@ const user = new Schema<IUser>(
     ],
     isSocialLogin: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isGoogleLogin: {
       type: Boolean,
-      default: false
+      default: false,
     },
-    isFacebookLogin : {
+    isFacebookLogin: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isAppleLogin: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   { timestamps: true }

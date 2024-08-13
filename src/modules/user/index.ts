@@ -5,3 +5,4 @@ export * from "./getUserById";
 export * from "./updateUser";
 export * from "./getPopulatedUser";
 export * from "./getUserByNumber";
+export * from "./getUserList";
