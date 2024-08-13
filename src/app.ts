@@ -11,8 +11,6 @@ import Location from "./controller/location";
 import Business from "./controller/business";
 import Service from "./controller/service";
 import Plan from "./controller/plan";
-import Users from "./controller/admin/user";
-import Busineses from "./controller/admin/business";
 import GrowthCollaborative from "./controller/growthCollaborative";
 import Subscription from "./controller/subscription";
 import PreferredLocation from "./controller/preferred-location";
@@ -69,12 +67,7 @@ export default class App {
     this.instance.use("/business", validateAuthIdToken, new Business().router);
     this.instance.use("/service", validateAuthIdToken, new Service().router);
     this.instance.use("/plan", validateAuthIdToken, new Plan().router);
-    this.instance.use("/users", validateAuthIdToken, new Users().router);
-    this.instance.use(
-      "/busineses",
-      validateAuthIdToken,
-      new Busineses().router
-    );
+   
     this.instance.use(
       "/growth-collaborative",
       validateAuthIdToken,

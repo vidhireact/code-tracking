@@ -10,7 +10,7 @@ import {
   saveWaitWhileUser,
   getWaitWhileUserByEmail,
   updateWaitWhileUser,
-} from "../../modules/waitWhileUser";
+} from "../../modules/wait-while-user";
 import {
   Business,
   getBusinessById,

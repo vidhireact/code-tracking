@@ -1,7 +1,7 @@
 import { Router } from "express";
 import Controller from "./controller";
 
-export default class Users extends Controller {
+export default class User extends Controller {
   public router = Router();
   constructor() {
     super();

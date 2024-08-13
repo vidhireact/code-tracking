@@ -5,7 +5,7 @@ import { IPlan } from "../../plan";
 import { ILocation } from "../../location";
 import { IGrowthCollaborative } from "../../growth-collaborative";
 import { IUser } from "../../user";
-import { IWaitWhileUser } from "../../waitWhileUser/types";
+import { IWaitWhileUser } from "../../wait-while-user";
 
 export interface IBusiness {
   _id?: string;

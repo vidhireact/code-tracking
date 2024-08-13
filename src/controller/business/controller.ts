@@ -22,7 +22,7 @@ import {
   saveWaitWhileUser,
   getWaitWhileUserByEmail,
   updateWaitWhileUser,
-} from "../../modules/waitWhileUser";
+} from "../../modules/wait-while-user";
 import { AES } from "crypto-js";
 
 export default class Controller {

@@ -2,6 +2,8 @@ import express, { Router } from "express";
 import Service from "./service";
 import GrowthCollaborative from "./growthCollaborative";
 import Plan from "./plan";
+import User from "../user";
+import Business from "../business";
 
 export default class Admin {
   public instance: express.Application;
@@ -18,6 +20,11 @@ export default class Admin {
     this.instance.use(
       "/growth-collaborative",
       new GrowthCollaborative().router
+    );
+    this.instance.use("/user", new User().router);
+    this.instance.use(
+      "/business",
+      new Business().router
     );
   }
 }

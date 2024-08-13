@@ -13,7 +13,7 @@ import {
 } from "../../modules/user";
 import {
   getWaitWhileUserByBusinessId,
-} from "../../modules/waitWhileUser";
+} from "../../modules/wait-while-user";
 
 export default class Controller {
   protected readonly updateUserSchema = Joi.object({
