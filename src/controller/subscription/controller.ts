@@ -10,13 +10,12 @@ import {
   getSubscriptionByUserId,
   getPopulatedSubscription,
   getBusinessBySubId,
-  getBusinesById,
+  getBusinessById,
   // deleteSubscription,
 } from "../../modules/subscription";
 import { Request } from "../../request";
 import { getServiceById } from "../../modules/service";
 import { getPlanById } from "../../modules/plan";
-import { getBusinessById } from "../../modules/business";
 import moment from "moment";
 
 export default class Controller {
@@ -24,7 +23,7 @@ export default class Controller {
     serviceId: Joi.string()
       .required()
       .external(async (value: string) => {
-        if (!value) return value;
+        if (!value) return value; ̰
         const service = await getServiceById(value);
         if (!service) {
           throw new Error("Please provide valid service.");
@@ -290,7 +289,7 @@ export default class Controller {
         res.status(422).json({ message: "Invalid Business." });
         return;
       }
-      const business = await getBusinesById(businessId);
+      const business = await getBusinessById(businessId);
       if(!business){
         res.status(422).json({ message: "Invalid Subscription." });
         return;

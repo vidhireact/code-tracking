@@ -1,6 +1,6 @@
 import { Business, BusinessModel } from "../business";
 
-export const getBusinesById = async (_id: string) => {
+export const getBusinessById = async (_id: string) => {
   const business = await BusinessModel.findById(_id)
     .populate({
       path: "locationIds",
