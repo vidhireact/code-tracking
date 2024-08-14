@@ -297,7 +297,7 @@ export default class Controller {
 
       res.status(200).json(business);
     } catch (error) {
-      console.log("error", "error in get admin getBusinesById", error);
+      console.log("error", "error in get getBusinessById", error);
       res.status(500).json({
         message: "Hmm... Something went wrong. Please try again later.",
         error: _get(error, "message"),
