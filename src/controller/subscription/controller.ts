@@ -23,7 +23,7 @@ export default class Controller {
     serviceId: Joi.string()
       .required()
       .external(async (value: string) => {
-        if (!value) return value; ̰
+        if (!value) return value;
         const service = await getServiceById(value);
         if (!service) {
           throw new Error("Please provide valid service.");
