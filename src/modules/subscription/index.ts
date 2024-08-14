@@ -7,3 +7,4 @@ export * from "./getSubscriptionByUserId";
 export * from "./saveSubscription";
 export * from "./updateSubscription";
 export * from "./getBusinessBySubId";
+export * from "./getBusinessById";

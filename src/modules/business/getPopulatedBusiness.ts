@@ -3,7 +3,7 @@ import { Business, BusinessModel } from ".";
 export const getPopulatedBusiness = async (_id: string) => {
   const business: Business = await BusinessModel.findById(_id)
     .populate({
-      path: "service",
+      path: "serviceIds",
       select: "-__v",
     })
     .populate({

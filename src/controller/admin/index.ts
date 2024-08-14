@@ -2,8 +2,8 @@ import express, { Router } from "express";
 import Service from "./service";
 import GrowthCollaborative from "./growthCollaborative";
 import Plan from "./plan";
-import User from "../user";
-import Business from "../business";
+import User from "./business";
+import Business from "./business";
 
 export default class Admin {
   public instance: express.Application;

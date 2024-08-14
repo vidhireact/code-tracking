@@ -10,6 +10,7 @@ import {
   getSubscriptionByUserId,
   getPopulatedSubscription,
   getBusinessBySubId,
+  getBusinesById,
   // deleteSubscription,
 } from "../../modules/subscription";
 import { Request } from "../../request";
@@ -275,6 +276,29 @@ export default class Controller {
       res.status(200).json(business);
     } catch (error) {
       console.log("error", "error in get Business by SubscriptionID", error);
+      res.status(500).json({
+        message: "Hmm... Something went wrong. Please try again later.",
+        error: _get(error, "message"),
+      });
+    }
+  };
+
+  protected readonly getBusinessById = async (req: Request, res: Response) => {
+    try {
+      const { businessId } = req.params;
+      if (!businessId) {
+        res.status(422).json({ message: "Invalid Business." });
+        return;
+      }
+      const business = await getBusinesById(businessId);
+      if(!business){
+        res.status(422).json({ message: "Invalid Subscription." });
+        return;
+      }
+
+      res.status(200).json(business);
+    } catch (error) {
+      console.log("error", "error in get admin getBusinesById", error);
       res.status(500).json({
         message: "Hmm... Something went wrong. Please try again later.",
         error: _get(error, "message"),

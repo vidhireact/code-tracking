@@ -16,5 +16,6 @@ export default class Subscription extends Controller {
     this.router.get("/:subscriptionId", this.get);
     this.router.delete("/:subscriptionId", this.delete);
     this.router.get("/business/:subscriptionId", this.getBusinessBySubscriptionId);
+    this.router.get("/business-id/:businessId", this.getBusinessById);
   }
 }
