@@ -165,7 +165,7 @@ export default class Controller {
       const businesses = await getBusinessByUserId(authUser._id.toString());
       res.status(200).json(businesses);
     } catch (error) {
-      console.log("error", "error in get admin business", error);
+      console.log("error", "error in get business", error);
       res.status(500).json({
         message: "Hmm... Something went wrong. Please try again later.",
         error: _get(error, "message"),

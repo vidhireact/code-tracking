@@ -10,5 +10,6 @@ export default class Business extends Controller {
 
   private initializeRoutes() {
     this.router.get("/", this.get);
+    this.router.get("/:businessId", this.get);
   }
 }
