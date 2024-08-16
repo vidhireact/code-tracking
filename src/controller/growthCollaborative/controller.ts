@@ -81,13 +81,7 @@ export default class Controller {
     res: Response
   ) => {
     try {
-      // const { serviceId } = req.params;
       const payload = req.body;
-      // if (!serviceId) {
-      //   res.status(422).json({ message: "Invalid Service." });
-      //   return;
-      // }
-
       const payloadValue = await this.validatePlanSchema
         .validateAsync(payload)
         .then((value) => {
@@ -101,14 +95,6 @@ export default class Controller {
       if (!payloadValue) {
         return;
       }
-
-      // const service = await getServiceById(serviceId);
-      // if (!service) {
-      //   res.status(422).json({ message: "Invalid Service." });
-      //   return;
-      // }
-
-      // const plans = await getGrowthCollaborativeByService(serviceId);
 
       const serviceId = payloadValue.planIds.allServices;
       const priceSum = payloadValue.planIds.priceSum;

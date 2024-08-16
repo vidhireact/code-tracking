@@ -6,7 +6,6 @@ export const getActivePlans = async ({
   page,
   limit,
   serviceId,
-  user,
 }: {
   user: IUser;
   page: number;
