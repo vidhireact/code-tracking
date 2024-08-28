@@ -6,7 +6,7 @@ const category = new Schema<ICategory>(
     name: {
       type: String,
     },
-    waitWhileCategory: {
+    waitWhileCategoryId: {
       type: String,
     },
     createdAt: {

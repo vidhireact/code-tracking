@@ -1,0 +1,68 @@
+import axios from "axios";
+import { Response } from "express";
+import { Request } from "express";
+import Joi from "joi";
+import { get as _get } from "lodash";
+import {
+  Category,
+  getCategoryById,
+  saveCategory,
+} from "../../../modules/category";
+
+export default class Controller {
+  private readonly createSchema = Joi.object().keys({
+    name: Joi.string().required(),
+  });
+  protected readonly create = async (req: Request, res: Response) => {
+    try {
+      const payload = req.body;
+
+      const payloadValue = await this.createSchema
+        .validateAsync(payload)
+        .then((value) => {
+          return value;
+        })
+        .catch((e) => {
+          console.log(e);
+          res.status(422).json({ message: e.message });
+          return;
+        });
+      if (!payloadValue) {
+        return;
+      }
+      const waitWhileApiKey = process.env.WAIT_WHILE_KEY;
+
+      const option = {
+        url: `${process.env.WAITWHILE_BASE_URL}/services`,
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          apikey: `${waitWhileApiKey}`,
+        },
+        data: JSON.stringify({
+          name: payloadValue.name,
+          locationIds: [process.env.WAIT_WHILE_BUSINESS_ID],
+        }),
+      };
+
+      const response = await axios(option);
+
+      const service = await saveCategory(
+        new Category({
+          ...payloadValue,
+          waitWhileCategoryId: response.data.id,
+        })
+      );
+
+      const newService = await getCategoryById(service._id);
+      res.status(200).json(newService);
+    } catch (error) {
+      console.log("error", "error in create category", error);
+      res.status(500).json({
+        message: "Hmm... Something went wrong. Please try again later.",
+        error: _get(error, "message"),
+      });
+    }
+  };
+}

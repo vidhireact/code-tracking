@@ -5,7 +5,7 @@ import { isUndefined, omitBy } from "lodash";
 export interface ICategory {
   _id?: string;
   name: string;
-  waitWhileCategory: string;
+  waitWhileCategoryId: string;
   serviceIds: (string | IService)[];
   createdAt?: Date;
   updatedAt?: Date;
@@ -14,7 +14,7 @@ export interface ICategory {
 export class Category implements ICategory {
   _id?: string;
   name: string;
-  waitWhileCategory: string;
+  waitWhileCategoryId: string;
   serviceIds: (string | IService)[];
   createdAt?: Date;
   updatedAt?: Date;
@@ -24,7 +24,7 @@ export class Category implements ICategory {
       ? input._id.toString()
       : new Types.ObjectId().toString();
     this.name = input.name;
-    this.waitWhileCategory = input.waitWhileCategory;
+    this.waitWhileCategoryId = input.waitWhileCategoryId;
     this.serviceIds = input.serviceIds;
     this.createdAt = input.createdAt;
     this.updatedAt = input.updatedAt;
