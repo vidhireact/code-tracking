@@ -15,6 +15,7 @@ import { Request } from "../../../request";
 export default class Controller {
   private readonly createSchema = Joi.object().keys({
     name: Joi.string().required(),
+    categoryId: Joi.string().required(),
   });
   private readonly updateSchema = Joi.object().keys({
     name: Joi.string().optional(),
@@ -74,6 +75,8 @@ export default class Controller {
         data: JSON.stringify({
           name: payloadValue.name,
           locationIds: [process.env.WAIT_WHILE_BUSINESS_ID],
+          isCategory: false,
+          parentId: payloadValue.categoryId,
         }),
       };
 

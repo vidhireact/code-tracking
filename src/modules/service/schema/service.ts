@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 import { IService } from "../types";
 import axios from "axios";
 
@@ -9,6 +9,10 @@ const service = new Schema<IService>(
     },
     waitWhileServiceId: {
       type: String,
+    },
+    categoryId: {
+      type: Types.ObjectId,
+      ref: "category",
     },
     createdAt: {
       type: Date,
