@@ -6,12 +6,19 @@ import { get as _get } from "lodash";
 import {
   Category,
   getCategoryById,
+  getCategoryByName,
   saveCategory,
 } from "../../../modules/category";
 
 export default class Controller {
   private readonly createSchema = Joi.object().keys({
-    name: Joi.string().required(),
+    name: Joi.string().required().external(async (v: string) => {
+      if(!v) return v;
+      const category = await getCategoryByName(v);
+      if(category){
+        throw new Error("Please provide valid category-name.");
+      }
+    }),
   });
   protected readonly create = async (req: Request, res: Response) => {
     try {

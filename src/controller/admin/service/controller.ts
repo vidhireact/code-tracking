@@ -1,7 +1,7 @@
 import { Response } from "express";
 import axios from "axios";
 import Joi from "joi";
-import { get as _get } from "lodash";
+import { get as _get, find as _find } from "lodash";
 import {
   getService,
   getServiceById,
@@ -11,11 +11,38 @@ import {
   // deleteService,
 } from "../../../modules/service";
 import { Request } from "../../../request";
+import {
+  getCategoryById,
+  getPopulatedCategory,
+} from "../../../modules/category";
 
 export default class Controller {
   private readonly createSchema = Joi.object().keys({
-    name: Joi.string().required(),
-    categoryId: Joi.string().required(),
+    name: Joi.string()
+      .required()
+      .external(async (v: string, headers) => {
+        if (!v) return v;
+        const { categoryId } = headers.state.ancestors[0];
+        const category = await getPopulatedCategory(categoryId);
+        if (!category) {
+          throw new Error("Please provide valid category.");
+        }
+        const name = _find(category.serviceIds, { name: v });
+        if (name) {
+          throw new Error("Please provide valid service name.");
+        }
+        return v;
+      }),
+    categoryId: Joi.string()
+      .required()
+      .external(async (v: string) => {
+        if (!v) return v;
+        const category = await getCategoryById(v);
+        if (!category) {
+          throw new Error("Please provide valid category.");
+        }
+        return v;
+      }),
   });
   private readonly updateSchema = Joi.object().keys({
     name: Joi.string().optional(),
