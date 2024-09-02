@@ -5,3 +5,4 @@ export * from "./saveCategory";
 export * from "./getCategoryById";
 export * from "./getPopulatedCategory";
 export * from "./getCategoryByName";
+export * from "./updateCategory";

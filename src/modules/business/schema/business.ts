@@ -24,6 +24,12 @@ const business = new Schema<IBusiness>(
         ref: "service",
       },
     ],
+    categoryIds: [
+      {
+        type: Types.ObjectId,
+        ref: "category",
+      }
+    ],
     planIds: [
       {
         type: Types.ObjectId,

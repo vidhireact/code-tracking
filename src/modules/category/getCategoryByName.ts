@@ -5,7 +5,7 @@ import { CategoryModel } from ".";
  * @returns return category by name
  */
 export const getCategoryByName = async (name: string) => {
-  const category = await CategoryModel.find({ name });
-
+  const category = await CategoryModel.findOne({ name });
+  
   return category;
 };

@@ -24,6 +24,7 @@ import {
   updateWaitWhileUser,
 } from "../../modules/wait-while-user";
 import { AES } from "crypto-js";
+import { getCategoryById } from "../../modules/category";
 
 export default class Controller {
   private readonly waitWhileUserSchema = Joi.object().keys({
@@ -49,77 +50,116 @@ export default class Controller {
       .required()
       .max(4),
   });
-  private readonly createSchema = Joi.object().keys({
-    name: Joi.string().required(),
-    description: Joi.string().required(),
-    email: Joi.string().email().required(),
-    phoneNumber: Joi.string()
-      .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
-      .required(),
-    logo: Joi.string().required(),
-    serviceIds: Joi.array().items(
-      Joi.string().external(async (v: string) => {
-        if (!v) return v;
-        const service = await getServiceById(v);
-        if (!service) {
-          throw new Error("Please provide valid  service.");
-        }
-        return v;
-      })
-    ),
-    growthCollaborativeId: Joi.string()
-      .required()
-      .external(async (v: string, helpers) => {
-        if (!v) return v;
-        const growthCollaborative = await getGrowthCollaborativeById(v);
-        if (!growthCollaborative) {
-          throw new Error("Please provide valid growthCollaborative.");
-        }
-        const serviceId = helpers.state.ancestors[0].serviceIds;
-        if (
-          !serviceId.some((id) => growthCollaborative.serviceId.includes(id))
-        ) {
-          throw new Error(
-            "Please provide valid service related to growthCollaborative plan."
-          );
-        }
-        return v;
-      }),
-    locationIds: Joi.array()
-      .required()
-      .items(Joi.string())
-      .external(async (value) => {
-        if (!value) return;
-        if (!value.length) return;
-        for await (const item of value) {
-          const location = await getLocationById(item);
-          if (!location) {
-            throw new Error("Please provide valid location.");
+  private readonly createSchema = Joi.object()
+    .keys({
+      name: Joi.string().required(),
+      description: Joi.string().required(),
+      email: Joi.string().email().required(),
+      phoneNumber: Joi.string()
+        .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
+        .required(),
+      logo: Joi.string().required(),
+      categoryIds: Joi.array().items(
+        Joi.string().external(async (v: string) => {
+          if (!v) return v;
+          const category = await getCategoryById(v);
+          if (!category) {
+            throw new Error("Please provide valid category.");
           }
-        }
-        return value;
-      }),
-    planIds: Joi.array()
-      .required()
-      .items(Joi.string())
-      .external(async (value, helpers) => {
-        const serviceId = helpers.state.ancestors[0].serviceIds;
-        if (!value) return;
-        if (!value.length) return;
-        for await (const item of value) {
-          const plan = await getPlanById(item);
-          if (!plan) {
-            throw new Error("Please provide valid Plan.");
-          } else {
-            if (!serviceId.every((id) => plan.serviceId.includes(id))) {
-              throw new Error("Please provide valid service related to plan.");
+          return v;
+        })
+      ),
+      serviceIds: Joi.array().items(
+        Joi.string().external(async (v: string) => {
+          if (!v) return v;
+          const service = await getServiceById(v);
+          if (!service) {
+            throw new Error("Please provide valid  service.");
+          }
+          return v;
+        })
+      ),
+      growthCollaborativeId: Joi.string()
+        .required()
+        .external(async (v: string, helpers) => {
+          if (!v) return v;
+          const growthCollaborative = await getGrowthCollaborativeById(v);
+          if (!growthCollaborative) {
+            throw new Error("Please provide valid growthCollaborative.");
+          }
+          const serviceId = helpers.state.ancestors[0].serviceIds;
+          if (
+            !serviceId.some((id) => growthCollaborative.serviceId.includes(id))
+          ) {
+            throw new Error(
+              "Please provide valid service related to growthCollaborative plan."
+            );
+          }
+          return v;
+        }),
+      locationIds: Joi.array()
+        .required()
+        .items(Joi.string())
+        .external(async (value) => {
+          if (!value) return;
+          if (!value.length) return;
+          for await (const item of value) {
+            const location = await getLocationById(item);
+            if (!location) {
+              throw new Error("Please provide valid location.");
             }
           }
+          return value;
+        }),
+      planIds: Joi.array()
+        .required()
+        .items(Joi.string())
+        .external(async (value, helpers) => {
+          const serviceId = helpers.state.ancestors[0].serviceIds;
+          if (!value) return;
+          if (!value.length) return;
+          for await (const item of value) {
+            const plan = await getPlanById(item);
+            if (!plan) {
+              throw new Error("Please provide valid Plan.");
+            } else {
+              if (!serviceId.every((id) => plan.serviceId.includes(id))) {
+                throw new Error(
+                  "Please provide valid service related to plan."
+                );
+              }
+            }
+          }
+          return value;
+        }),
+      waitWhileUser: this.waitWhileUserSchema,
+    })
+    .external(async (value) => {
+      const { categoryIds, serviceIds } = value;
+
+      const validServiceIds = new Set();
+
+      categoryIds.forEach(async (catId) => {
+        const category = await getCategoryById(catId);
+        if (!category) {
+          throw new Error("Please provide valid category.");
         }
-        return value;
-      }),
-    waitWhileUser: this.waitWhileUserSchema,
-  });
+        validServiceIds.add(category.serviceIds);
+        // category.serviceIds.forEach(serviceId => validServiceIds.add(serviceId));
+      });
+
+      const service = Array.from(validServiceIds);
+
+      const invalidServices = serviceIds.filter(
+        (serviceId) => !service.includes(serviceId)
+      );
+
+      if (invalidServices.length > 0) {
+        throw new Error("Please provide valid service.");
+      }
+
+      return value;
+    });
 
   private readonly updateSchema = Joi.object().keys({
     name: Joi.string().optional(),
@@ -212,6 +252,27 @@ export default class Controller {
       const response = await axios(options);
 
       const detailUser = payloadValue.waitWhileUser;
+
+      for (const id of payloadValue.categoryIds) {
+        const category = await getCategoryById(id);
+        if (!category.waitWhileCategoryId) {
+          res.status(422).json({ message: "Invalid WaitWhile Category." });
+          return;
+        }
+        const options = {
+          url: `${process.env.WAITWHILE_BASE_URL}/services/${category.waitWhileCategoryId}`,
+          method: "POST",
+          headers: {
+            accept: "application/json",
+            "content-type": "application/json",
+            apikey: `${waitWhileApiKey}`,
+          },
+          data: JSON.stringify({
+            addLocationIds: response.data.id,
+          }),
+        };
+        await axios(options);
+      }
 
       for (const id of payloadValue.serviceIds) {
         const serviceDetails = await getServiceById(id);

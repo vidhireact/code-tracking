@@ -16,6 +16,7 @@ import Subscription from "./controller/subscription";
 import PreferredLocation from "./controller/preferred-location";
 import Stripe from "./controller/stripe";
 import WaitWhile from "./controller/waitWhleUser";
+import Category from "./controller/category";
 
 export default class App {
   public static instance: Application;
@@ -65,6 +66,7 @@ export default class App {
     this.instance.use("/user", validateAuthIdToken, new User().router);
     this.instance.use("/location", validateAuthIdToken, new Location().router);
     this.instance.use("/business", validateAuthIdToken, new Business().router);
+    this.instance.use("/category", validateAuthIdToken, new Category().router);
     this.instance.use("/service", validateAuthIdToken, new Service().router);
     this.instance.use("/plan", validateAuthIdToken, new Plan().router);
    

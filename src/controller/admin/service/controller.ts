@@ -1,7 +1,7 @@
 import { Response } from "express";
 import axios from "axios";
 import Joi from "joi";
-import { get as _get, find as _find } from "lodash";
+import { get as _get, find as _find, uniqBy as _uniqBy } from "lodash";
 import {
   getService,
   getServiceById,
@@ -12,8 +12,10 @@ import {
 } from "../../../modules/service";
 import { Request } from "../../../request";
 import {
+  Category,
   getCategoryById,
   getPopulatedCategory,
+  updateCategory,
 } from "../../../modules/category";
 
 export default class Controller {
@@ -89,6 +91,8 @@ export default class Controller {
         return;
       }
 
+      const category = await getCategoryById(payloadValue.categoryId);
+
       const waitWhileApiKey = process.env.WAIT_WHILE_KEY;
 
       const option = {
@@ -103,7 +107,7 @@ export default class Controller {
           name: payloadValue.name,
           locationIds: [process.env.WAIT_WHILE_BUSINESS_ID],
           isCategory: false,
-          parentId: payloadValue.categoryId,
+          parentId: category.waitWhileCategoryId,
         }),
       };
 
@@ -113,6 +117,15 @@ export default class Controller {
         new Service({
           ...payloadValue,
           waitWhileServiceId: response.data.id,
+        })
+      );
+
+      await updateCategory(
+        new Category({
+          ...category,
+          serviceIds: _uniqBy([...category.serviceIds, service._id], (id) =>
+            id.toString()
+          ),
         })
       );
 

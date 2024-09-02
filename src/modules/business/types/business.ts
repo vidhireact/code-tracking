@@ -6,6 +6,7 @@ import { ILocation } from "../../location";
 import { IGrowthCollaborative } from "../../growth-collaborative";
 import { IUser } from "../../user";
 import { IWaitWhileUser } from "../../wait-while-user";
+import { ICategory } from "../../category";
 
 export interface IBusiness {
   _id?: string;
@@ -14,6 +15,7 @@ export interface IBusiness {
   logo?: string;
 
   serviceIds: (string | IService)[];
+  categoryIds: (string | ICategory)[];
   email: string;
   phoneNumber: string;
 
@@ -39,6 +41,7 @@ export class Business implements IBusiness {
   logo?: string;
 
   serviceIds: (string | IService)[];
+  categoryIds: (string | ICategory)[];
   email: string;
   phoneNumber: string;
 
@@ -65,6 +68,7 @@ export class Business implements IBusiness {
     this.logo = input.logo;
 
     this.serviceIds = input.serviceIds;
+    this.categoryIds = input.categoryIds;
     this.email = input.email;
     this.phoneNumber = input.phoneNumber;
 
