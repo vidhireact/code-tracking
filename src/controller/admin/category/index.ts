@@ -12,5 +12,7 @@ export default class Category extends Controller {
   private initializeRoutes() {
     this.router.post("", this.create);
     this.router.patch("/:categoryId", this.update);
+    this.router.get("/", this.get);
+    this.router.get("/:categoryId", this.get);
   }
 }
