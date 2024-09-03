@@ -4,3 +4,4 @@ export * from "./getService";
 export * from "./getServiceById";
 export * from "./saveService";
 export * from "./updateService";
+export * from "./getServiceByName";

@@ -8,6 +8,7 @@ import {
   Service,
   saveService,
   updateService,
+  getServiceByName,
   // deleteService,
 } from "../../../modules/service";
 import { Request } from "../../../request";
@@ -47,7 +48,22 @@ export default class Controller {
       }),
   });
   private readonly updateSchema = Joi.object().keys({
-    name: Joi.string().optional(),
+    name: Joi.string()
+      .optional()
+      .external(async (v: string) => {
+        const service = await getServiceByName(v);
+        if (service) {
+          throw new Error("Please provide valid service name.");
+        }
+        return v;
+      }),
+    categoryId: Joi.string().external(async (v: string) => {
+      const category = await getCategoryById(v);
+      if (!category) {
+        throw new Error("Please provide valid category.");
+      }
+      return v;
+    }),
   });
 
   protected readonly get = async (req: Request, res: Response) => {
@@ -151,6 +167,27 @@ export default class Controller {
       const service = await getServiceById(serviceId);
       if (!service) {
         res.status(422).json({ message: "Invalid Service." });
+        return;
+      }
+
+      const waitWhileApiKey = process.env.WAIT_WHILE_KEY;
+
+      const option = {
+        url: `${process.env.WAITWHILE_BASE_URL}/services/${service.waitWhileServiceId}`,
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          apikey: `${waitWhileApiKey}`,
+        },
+      };
+
+      const response = await axios(option);
+
+      const data = Array.from(response.data.locationIds);
+
+      if (data.length > 1) {
+        res.status(422).json({ message: "services already used" });
         return;
       }
 
