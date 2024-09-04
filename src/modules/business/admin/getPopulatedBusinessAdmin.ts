@@ -19,6 +19,10 @@ export const getPopulatedBusinessAdmin = async (_id: string) => {
       select: "-__v",
     })
     .populate({
+      path: "serviceIds",
+      select: "-__v",
+    })
+    .populate({
       path: "waitWhileUserId",
       select: "-__v",
     });
