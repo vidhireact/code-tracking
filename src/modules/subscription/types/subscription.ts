@@ -5,6 +5,7 @@ import { IPlan } from "../../plan";
 import { IBusiness } from "../../business";
 import { ILocation } from "../../location";
 import { IService } from "../../service";
+import { ICategory } from "../../category";
 
 export interface ISubscription {
   _id?: string;
@@ -13,6 +14,7 @@ export interface ISubscription {
   planId: string | IPlan;
   businessId?: string | IBusiness;
   locationId: string | ILocation;
+  categoryId: string | ICategory;
   serviceId: string | IService;
 
   associated: boolean;
@@ -32,6 +34,7 @@ export class Subscription implements ISubscription {
   planId: string | IPlan;
   businessId?: string | IBusiness;
   locationId: string | ILocation;
+  categoryId: string | ICategory;
   serviceId: string | IService;
 
   associated: boolean;
@@ -52,6 +55,7 @@ export class Subscription implements ISubscription {
     this.businessId = input.businessId;
 
     this.locationId = input.locationId;
+    this.categoryId = input.categoryId;
     this.serviceId = input.serviceId;
     this.associated = input.associated;
     this.associatedDate = input.associatedDate;

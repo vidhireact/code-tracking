@@ -19,11 +19,14 @@ const subscription = new Schema<ISubscription>(
       type: Types.ObjectId,
       ref: "location",
     },
+    categoryId: {
+      type: Types.ObjectId,
+      ref: "category",
+    },
     serviceId: {
       type: Types.ObjectId,
       ref: "service",
     },
-
     associated: {
       type: Boolean,
       default: false,

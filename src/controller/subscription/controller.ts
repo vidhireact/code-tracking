@@ -1,7 +1,7 @@
 import { Response } from "express";
 
 import Joi from "joi";
-import { get as _get } from "lodash";
+import { get as _get, find as _find } from "lodash";
 import {
   getSubscriptionById,
   Subscription,
@@ -17,9 +17,24 @@ import { Request } from "../../request";
 import { getServiceById } from "../../modules/service";
 import { getPlanById } from "../../modules/plan";
 import moment from "moment";
+import { getCategoryById } from "../../modules/category";
 
 export default class Controller {
   private readonly createSchema = Joi.object().keys({
+    categoryId: Joi.string()
+      .required()
+      .external(async (v: string) => {
+        if (!v) return v;
+        const category = await getCategoryById(v);
+        if (!category) {
+          throw new Error("Please provide valid category.");
+        }
+        const name = _find(category.serviceIds, { name: v });
+        if (name) {
+          throw new Error("Please provide valid service name.");
+        }
+        return v;
+      }),
     serviceId: Joi.string()
       .required()
       .external(async (value: string) => {
