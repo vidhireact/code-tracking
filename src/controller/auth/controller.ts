@@ -12,11 +12,12 @@ import {
   getUserByNumber,
   updateUser,
 } from "../../modules/user";
-import { get as _get } from "lodash";
+import { get as _get, find as _find } from "lodash";
 import {
   PreferredLocation,
   savePreferredLocation,
 } from "../../modules/preferred-location";
+import { getCategoryById } from "../../modules/category";
 
 export default class Controller {
   private readonly loginSchema = Joi.object({
@@ -64,12 +65,29 @@ export default class Controller {
         return v;
       }),
     password: Joi.string()
-      .required()
+      .required() 
       .min(8)
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)
       .external((v: string) => {
         return AES.encrypt(v, process.env.JWT_PASSWORD_SECRET).toString();
       }),
+    categoryId: Joi.string().required()
+    .external(async (v: string, headers) => {
+      if (!v) return v;
+      const { serviceId } = headers.state.ancestors[0];
+      const category = await getCategoryById(v);
+      if (!category) {
+        throw new Error(
+          "Please provide valid category for profile category."
+        );
+      }
+
+      const service = await _find(category.serviceIds, { _Id: serviceId });
+      if (!service) {
+        throw new Error("Please provide valid service.");
+      }
+      return v;
+    }),
     serviceId: Joi.string().required(),
     address: Joi.string().required(),
     latitude: Joi.number().required(),
@@ -251,6 +269,7 @@ export default class Controller {
           latitude: user.latitude,
           longitude: user.longitude,
           userId: user._id.toString(),
+          categoryId: payloadValue.categoryId,
           serviceId: payloadValue.serviceId,
         })
       );

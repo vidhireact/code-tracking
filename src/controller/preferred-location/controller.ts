@@ -1,7 +1,7 @@
 import { Response } from "express";
 
 import Joi from "joi";
-import { get as _get } from "lodash";
+import { get as _get, find as _find } from "lodash";
 
 import { Request } from "../../request";
 import { getServiceById } from "../../modules/service";
@@ -11,6 +11,7 @@ import {
   getPreferredLocationById,
   updatePreferredLocation,
 } from "../../modules/preferred-location";
+import { getCategoryById } from "../../modules/category";
 
 export default class Controller {
   private readonly updateSchema = Joi.object().keys({
@@ -19,6 +20,24 @@ export default class Controller {
     address: Joi.string().optional(),
     latitude: Joi.number().optional(),
     longitude: Joi.number().optional(),
+    categoryId: Joi.string()
+      .optional()
+      .external(async (v: string, headers) => {
+        if (!v) return v;
+        const { serviceId } = headers.state.ancestors[0];
+        const category = await getCategoryById(v);
+        if (!category) {
+          throw new Error(
+            "Please provide valid category for profile category."
+          );
+        }
+
+        const service = await _find(category.serviceIds, { _Id: serviceId });
+        if (!service) {
+          throw new Error("Please provide valid service.");
+        }
+        return v;
+      }),
     serviceId: Joi.string()
       .optional()
       .external(async (v: string) => {

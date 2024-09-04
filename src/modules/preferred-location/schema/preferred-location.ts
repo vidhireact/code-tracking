@@ -22,6 +22,10 @@ const preferredLocation = new Schema<IPreferredLocation>({
     type: Types.ObjectId,
     ref: "user",
   },
+  categoryId: {
+    type: Types.ObjectId,
+    ref: "category"
+  },
   serviceId: {
     type: Types.ObjectId,
     ref: "service",

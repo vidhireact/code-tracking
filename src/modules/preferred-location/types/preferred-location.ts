@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import { IUser } from "../../user";
 import { isUndefined, omitBy } from "lodash";
 import { IService } from "../../service";
+import { ICategory } from "../../category";
 
 export interface IPreferredLocation {
   _id?: string;
@@ -12,6 +13,7 @@ export interface IPreferredLocation {
   longitude: number;
 
   userId: string | IUser;
+  categoryId: string | ICategory;
   serviceId?: string | IService;
 
   createdAt?: Date;
@@ -27,6 +29,7 @@ export class PreferredLocation implements IPreferredLocation {
   longitude: number;
 
   userId: string | IUser;
+  categoryId: string | ICategory;
   serviceId?: string | IService;
 
   createdAt?: Date;
@@ -42,6 +45,7 @@ export class PreferredLocation implements IPreferredLocation {
     this.latitude = input.latitude;
     this.longitude = input.longitude;
     this.userId = input.userId;
+    this.categoryId = input.categoryId;
     this.serviceId = input.serviceId;
     this.createdAt = input.createdAt;
     this.updatedAt = input.updatedAt;
