@@ -10,8 +10,8 @@ export default class Category extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get("/", this.get);
-    this.router.get("/:categoryId", this.get);
     this.router.get("/get-category", this.getCategoryForService);
+    this.router.get("/", this.get);
+    this.router.get("/:categoryId", this.get); 
   }
 }
