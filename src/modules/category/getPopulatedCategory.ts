@@ -1,14 +1,13 @@
-import { Category, CategoryModel } from ".";
+import { CategoryModel } from ".";
 /**
- *
- * @param _id category _id
- * @returns return populated category
+ * 
+ * @returns populated category 
  */
-export const getPopulatedCategory = async (_id: string) => {
-  const category: Category = await CategoryModel.findById(_id).populate({
+export const getPopulatedCategory = async () => {
+  const category = await CategoryModel.find().populate({
     path: "serviceIds",
     select: "-__v",
   });
 
-  return category ? new Category(category) : null;
+  return category;
 };

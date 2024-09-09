@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { get as _get } from "lodash";
-import { getCategory, getCategoryById } from "../../modules/category";
+import { getCategory, getCategoryById, getPopulatedCategory } from "../../modules/category";
 import { Request } from "../../request";
 
 export default class Controller {
@@ -26,4 +26,17 @@ export default class Controller {
       });
     }
   };
+
+  protected readonly getCategoryForService = async (req: Request, res: Response) => {
+    try {
+      const category = await getPopulatedCategory();
+      res.status(200).json(category);
+    } catch (error) {
+      console.log("error", "error in get categoryv for service", error);
+      res.status(500).json({
+        message: "Hmm... Something went wrong. Please try again later.",
+        error: _get(error, "message"),
+      });
+    }
+  }
 }

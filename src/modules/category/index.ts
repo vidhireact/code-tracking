@@ -3,6 +3,7 @@ export * from "./types";
 export * from "./getCategory";
 export * from "./saveCategory";
 export * from "./getCategoryById";
-export * from "./getPopulatedCategory";
+export * from "./getPopulatedCategoryById";
 export * from "./getCategoryByName";
 export * from "./updateCategory";
+export * from "./getPopulatedCategory";

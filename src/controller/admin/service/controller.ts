@@ -15,7 +15,7 @@ import { Request } from "../../../request";
 import {
   Category,
   getCategoryById,
-  getPopulatedCategory,
+  getPopulatedCategoryById,
   updateCategory,
 } from "../../../modules/category";
 
@@ -26,7 +26,7 @@ export default class Controller {
       .external(async (v: string, headers) => {
         if (!v) return v;
         const { categoryId } = headers.state.ancestors[0];
-        const category = await getPopulatedCategory(categoryId);
+        const category = await getPopulatedCategoryById(categoryId);
         if (!category) {
           throw new Error("Please provide valid category.");
         }
