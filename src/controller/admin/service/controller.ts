@@ -51,19 +51,23 @@ export default class Controller {
     name: Joi.string()
       .optional()
       .external(async (v: string) => {
+        if (!v) return v;
         const service = await getServiceByName(v);
         if (service) {
           throw new Error("Please provide valid service name.");
         }
         return v;
       }),
-    categoryId: Joi.string().external(async (v: string) => {
-      const category = await getCategoryById(v);
-      if (!category) {
-        throw new Error("Please provide valid category.");
-      }
-      return v;
-    }),
+    categoryId: Joi.string()
+      .optional()
+      .external(async (v: string) => {
+        if (!v) return v;
+        const category = await getCategoryById(v);
+        if (!category) {
+          throw new Error("Please provide valid category.");
+        }
+        return v;
+      }),
   });
 
   protected readonly get = async (req: Request, res: Response) => {

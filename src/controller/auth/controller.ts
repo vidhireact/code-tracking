@@ -12,7 +12,7 @@ import {
   getUserByNumber,
   updateUser,
 } from "../../modules/user";
-import { get as _get, find as _find } from "lodash";
+import { get as _get} from "lodash";
 import {
   PreferredLocation,
   savePreferredLocation,
@@ -81,8 +81,9 @@ export default class Controller {
           "Please provide valid category for profile category."
         );
       }
-
-      const service = await _find(category.serviceIds, { _Id: serviceId });
+      
+      const service = category.serviceIds.includes(serviceId);
+      
       if (!service) {
         throw new Error("Please provide valid service.");
       }
