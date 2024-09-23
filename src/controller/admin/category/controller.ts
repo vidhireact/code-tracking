@@ -8,6 +8,7 @@ import {
   getCategory,
   getCategoryById,
   getCategoryByName,
+  getPopulatedCategory,
   saveCategory,
   updateCategory,
 } from "../../../modules/category";
@@ -40,6 +41,19 @@ export default class Controller {
         return v;
       }),
   });
+
+  protected readonly getCategoryForService = async (req: Request, res: Response) => {
+    try {
+      const category = await getPopulatedCategory();
+      res.status(200).json(category);
+    } catch (error) {
+      console.log("error", "error in get categorv for service", error);
+      res.status(500).json({
+        message: "Hmm... Something went wrong. Please try again later.",
+        error: _get(error, "message"),
+      });
+    }
+  }
 
   protected readonly get = async (req: Request, res: Response) => {
     try {
