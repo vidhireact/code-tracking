@@ -2,7 +2,7 @@ import { Response } from "express";
 import { get as _get } from "lodash";
 import {
   getGrowthCollaborativeByServiceArray,
-  getPopulatedGrowthCollaborative,
+  getPopulatedGrowthCollaborativeById,
 } from "../../modules/growth-collaborative";
 import { Request } from "../../request";
 import { getServiceById } from "../../modules/service";
@@ -58,7 +58,7 @@ export default class Controller {
         res.status(422).json({ message: "Invalid GrowthCollaborative." });
         return;
       }
-      const growthCollaborative = await getPopulatedGrowthCollaborative(
+      const growthCollaborative = await getPopulatedGrowthCollaborativeById(
         growthCollaborativeId
       );
       if (!growthCollaborative) {

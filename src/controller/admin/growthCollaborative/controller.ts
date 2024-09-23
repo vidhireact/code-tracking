@@ -3,9 +3,9 @@ import { Response } from "express";
 import Joi from "joi";
 import { get as _get } from "lodash";
 import {
-  getGrowthCollaborative,
   getGrowthCollaborativeById,
   getPopulatedGrowthCollaborative,
+  getPopulatedGrowthCollaborativeById,
   GrowthCollaborative,
   saveGrowthCollaborative,
   updateGrowthCollaborative,
@@ -48,7 +48,7 @@ export default class Controller {
     try {
       const { growthCollaborativeId } = req.params;
       if (growthCollaborativeId) {
-        const growthCollaborative = await getPopulatedGrowthCollaborative(
+        const growthCollaborative = await getPopulatedGrowthCollaborativeById(
           growthCollaborativeId
         );
         if (!growthCollaborative) {
@@ -58,7 +58,7 @@ export default class Controller {
         res.status(200).json(growthCollaborative);
         return;
       }
-      const growthCollaborates = await getGrowthCollaborative();
+      const growthCollaborates = await getPopulatedGrowthCollaborative();
       res.status(200).json(growthCollaborates);
     } catch (error) {
       console.log("error", "error in get admin growthCollaborative", error);

@@ -1,12 +1,10 @@
-import { GrowthCollaborative, GrowthCollaborativeModel } from ".";
+import { GrowthCollaborativeModel } from ".";
 
-export const getPopulatedGrowthCollaborative = async (_id: string) => {
-  const growthCollaborative: GrowthCollaborative = await GrowthCollaborativeModel.findById(
-    _id
-  ).populate({
+export const getPopulatedGrowthCollaborative = async () => {
+  const growthCollaborative = await GrowthCollaborativeModel.find().populate({
     path: "service",
     select: "-__v",
   });
 
-  return growthCollaborative ? new GrowthCollaborative(growthCollaborative) : null;
+  return growthCollaborative;
 };
