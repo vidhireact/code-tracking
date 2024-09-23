@@ -17,7 +17,7 @@ export const getActivePlans = async ({
   const plans = await PlanModel.aggregate([
     {
       $match: {
-        serviceId: { $all: serviceId.map((id) => new Types.ObjectId(id)) },
+        serviceId: { $in: serviceId.map((id) => new Types.ObjectId(id)) },
       },
     },
     {
