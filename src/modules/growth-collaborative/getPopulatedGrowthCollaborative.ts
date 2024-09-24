@@ -2,7 +2,7 @@ import { GrowthCollaborativeModel } from ".";
 
 export const getPopulatedGrowthCollaborative = async () => {
   const growthCollaborative = await GrowthCollaborativeModel.find().populate({
-    path: "service",
+    path: "serviceId",
     select: "-__v",
   });
 

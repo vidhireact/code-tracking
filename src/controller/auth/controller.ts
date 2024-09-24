@@ -39,7 +39,8 @@ export default class Controller {
 
   private readonly registerSchema = Joi.object({
     firstName: Joi.string().required(),
-    lastName: Joi.string().required(),
+    // lastName: Joi.string().required(),
+    lastName: Joi.string(),
     phoneNumber: Joi.string()
       .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
       .required()

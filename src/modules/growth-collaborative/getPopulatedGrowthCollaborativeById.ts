@@ -4,7 +4,7 @@ export const getPopulatedGrowthCollaborativeById = async (_id: string) => {
   const growthCollaborative: GrowthCollaborative = await GrowthCollaborativeModel.findById(
     _id
   ).populate({
-    path: "service",
+    path: "serviceId",
     select: "-__v",
   });
 
