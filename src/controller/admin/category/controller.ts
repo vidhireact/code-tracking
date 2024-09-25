@@ -179,6 +179,20 @@ export default class Controller {
       if (!payloadValue) {
         return;
       }
+
+      await axios({
+        url: `${process.env.WAITWHILE_BASE_URL}/services/${category.waitWhileCategoryId}`,
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          apikey: `${waitWhileApiKey}`,
+        },
+        data: JSON.stringify({
+          name: payloadValue.name,
+        }),
+      });
+
       const updateDetails = await updateCategory(
         new Category({ ...category.toJSON(), ...payloadValue })
       );

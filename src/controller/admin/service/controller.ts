@@ -209,6 +209,19 @@ export default class Controller {
         return;
       }
 
+      await axios({
+        url: `${process.env.WAITWHILE_BASE_URL}/services/${service.waitWhileServiceId}`,
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          apikey: `${waitWhileApiKey}`,
+        },
+        data: JSON.stringify({
+          name: payloadValue.name,
+        }),
+      });
+
       const updatedService = await updateService(
         new Service({ ...service.toJSON(), ...payloadValue })
       );
