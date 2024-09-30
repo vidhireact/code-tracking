@@ -44,11 +44,9 @@ export default class Controller {
       .required()
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/),
     roles: Joi.array()
-      .items(
-        Joi.string().valid("admin", "editor", "reader", "owner").lowercase()
-      )
-      .required()
-      .max(4),
+    .items(Joi.string().valid("reader", "employee")) //
+    .required()
+    .max(2),
   });
   private readonly createSchema = Joi.object()
     .keys({
