@@ -36,7 +36,7 @@ export default class Controller {
       .required()
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/),
     roles: Joi.array()
-      .items(Joi.string().valid("reader", "employee"))
+      .items(Joi.string().valid("reader", "employee")) //
       .required()
       .max(2),
   });
