@@ -132,32 +132,31 @@ export default class Controller {
         }),
       waitWhileUser: this.waitWhileUserSchema,
     })
-    // .external(async (value) => {
-    //   const { categoryIds, serviceIds } = value;
+    .external(async (value) => {
+      const { categoryIds, serviceIds } = value;
 
-    //   const validServiceIds = new Set();
+      const validServiceIds = new Set();
 
-    //   categoryIds.forEach(async (catId) => {
-    //     const category = await getCategoryById(catId);
-    //     if (!category) {
-    //       throw new Error("Please provide valid category.");
-    //     }
-    //     validServiceIds.add(category.serviceIds);
-    //     // category.serviceIds.forEach(serviceId => validServiceIds.add(serviceId));
-    //   });
+      categoryIds.forEach(async (catId) => {
+        const category = await getCategoryById(catId);
+        if (!category) {
+          throw new Error("Please provide valid category.");
+        }
+        validServiceIds.add(category.serviceIds);
+      });
 
-    //   const service = Array.from(validServiceIds);
+      const service = Array.from(validServiceIds);
 
-    //   const invalidServices = serviceIds.filter(
-    //     (serviceId) => !service.includes(serviceId)
-    //   );
+      const invalidServices = serviceIds.filter(
+        (serviceId) => !service.includes(serviceId)
+      );
 
-    //   if (invalidServices.length > 0) {
-    //     throw new Error("Please provide valid service.");
-    //   }
+      if (invalidServices.length > 0) {
+        throw new Error("Please provide valid service.");
+      }
 
-    //   return value;
-    // });
+      return value;
+    });
 
   private readonly updateSchema = Joi.object().keys({
     name: Joi.string().optional(),
