@@ -52,10 +52,10 @@ export default class Controller {
     .keys({
       name: Joi.string().required(),
       description: Joi.string().required(),
-      email: Joi.string().email().required(),
-      phoneNumber: Joi.string()
-        .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
-        .required(),
+      // email: Joi.string().email().required(),
+      // phoneNumber: Joi.string()
+      //   .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
+      //   .required(),
       logo: Joi.string().required(),
       categoryIds: Joi.array().items(
         Joi.string().external(async (v: string) => {
@@ -136,10 +136,10 @@ export default class Controller {
   private readonly updateSchema = Joi.object().keys({
     name: Joi.string().optional(),
     description: Joi.string().optional(),
-    email: Joi.string().required(),
-    phoneNumber: Joi.string()
-      .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
-      .required(),
+    // email: Joi.string().required(),
+    // phoneNumber: Joi.string()
+    //   .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
+    //   .required(),
     logo: Joi.string().optional(),
     locationIds: Joi.array()
       .optional()
