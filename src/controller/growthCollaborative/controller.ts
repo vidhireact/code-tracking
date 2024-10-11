@@ -96,7 +96,7 @@ export default class Controller {
         return;
       }
 
-      const serviceId = payloadValue.planIds.allServices;
+      const serviceId = payloadValue.serviceIds;
       const priceSum = payloadValue.planIds.priceSum;
 
       const plans = await getGrowthCollaborativeByServiceArray({

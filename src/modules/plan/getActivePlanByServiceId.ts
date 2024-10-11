@@ -144,6 +144,7 @@ export const getActivePlanByServiceId = async ({
         keyFeatures: 1,
         price: 1,
         duration: 1,
+        serviceId: 1,
         visits: 1,
         createdAt: 1,
       },

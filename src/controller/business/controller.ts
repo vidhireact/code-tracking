@@ -70,7 +70,7 @@ export default class Controller {
       serviceIds: Joi.array().items(
         Joi.string().external(async (v: string) => {
           if (!v) return v;
-          const service = await getServiceById(v);
+          const service = await getServiceById(v);          
           if (!service) {
             throw new Error("Please provide valid  service.");
           }
@@ -121,7 +121,7 @@ export default class Controller {
             if (!plan) {
               throw new Error("Please provide valid Plan.");
             } else {
-              if (!serviceId.every((id) => plan.serviceId.includes(id))) {
+              if (!serviceId.some((id) => plan.serviceId.includes(id))) {
                 throw new Error(
                   "Please provide valid service related to plan."
                 );
@@ -132,31 +132,6 @@ export default class Controller {
         }),
       waitWhileUser: this.waitWhileUserSchema,
     })
-    .external(async (value) => {
-      const { categoryIds, serviceIds } = value;
-
-      const validServiceIds = new Set();
-
-      categoryIds.forEach(async (catId) => {
-        const category = await getCategoryById(catId);
-        if (!category) {
-          throw new Error("Please provide valid category.");
-        }
-        validServiceIds.add(category.serviceIds);
-      });
-
-      const service = Array.from(validServiceIds);
-
-      const invalidServices = serviceIds.filter(
-        (serviceId) => !service.includes(serviceId)
-      );
-
-      if (invalidServices.length > 0) {
-        throw new Error("Please provide valid service.");
-      }
-
-      return value;
-    });
 
   private readonly updateSchema = Joi.object().keys({
     name: Joi.string().optional(),
@@ -226,7 +201,9 @@ export default class Controller {
         });
       if (!payloadValue) {
         return;
-      }      
+      }   
+      
+      // ####
 
       const waitWhileApiKey = process.env.WAIT_WHILE_KEY;
 
@@ -331,6 +308,8 @@ export default class Controller {
         payloadValue.waitWhileUser.email
       );
 
+      // ######
+
       const business = await saveBusiness(
         new Business({
           ...payloadValue,
@@ -393,6 +372,8 @@ export default class Controller {
         return;
       }
 
+      // ####
+
       const waitWhileApiKey = process.env.WAIT_WHILE_KEY;
 
       const options = {
@@ -409,6 +390,8 @@ export default class Controller {
       };
 
       const response = await axios(options);
+
+      // ###
 
       const updatedBusiness = await updateBusiness(
         new Business({

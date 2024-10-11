@@ -13,6 +13,7 @@ import { getServiceById } from "../../modules/service";
 import { Request } from "../../request";
 import { User, updateUser } from "../../modules/user";
 import Joi from "joi";
+import { Types } from "mongoose";
 
 export default class Controller {
   private readonly updateLikedPlanSchema = Joi.object().keys({
@@ -77,8 +78,13 @@ export default class Controller {
           serviceId,
           user: authUser,
         });
+
+        const service_id = new Types.ObjectId(serviceId);
+
+        // some
+        const filterPlan = plans.filter(plan => plan.serviceId.find(serviceId => serviceId.equals(service_id)));
         
-        res.status(200).json(plans);
+        res.status(200).json(filterPlan);
         return;
       }
     } catch (error) {
@@ -102,13 +108,29 @@ export default class Controller {
         res.status(200).json(plans);
         return;
       } else {
+
         const plans = await getRecommendPlanByServiceId({
           page: 1,
           limit: 20,
           serviceId,
           user: authUser,
+        });        
+
+        const plan = await getActivePlanByServiceId({
+          page: 1,
+          limit: 20,
+          serviceId,
+          user: authUser,
         });
-        res.status(200).json(plans);
+
+        const service_id = new Types.ObjectId(serviceId);
+
+        // some
+        const filterPlan = plan.filter(plan => plan.serviceId.find(serviceId => serviceId.equals(service_id)));
+        
+        const filterRecommendPlan = plans.filter(item1 => !filterPlan.some(item2 => item2._id.equals(item1._id)));        
+
+        res.status(200).json(filterRecommendPlan);
         return;
       }
     } catch (error) {

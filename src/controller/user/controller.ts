@@ -21,17 +21,8 @@ export default class Controller {
     lastName: Joi.string().optional(),
     email: Joi.string().email(),
     phoneNumber: Joi.string()
-      .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
       .optional()
-      .external(async (v: string) => {
-        const user: IUser = await getUserByNumber(v);
-        if (user) {
-          throw new Error(
-            "This phone number is already associated with another account. Please use a different phone number."
-          );
-        }
-        return v;
-      }),
+      .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/),
     address: Joi.string().optional(),
     profilePic: Joi.string().optional(),
     latitude: Joi.number().optional(),
@@ -91,8 +82,15 @@ export default class Controller {
           console.log(e);
           res.status(422).json({ message: e.message });
         });
-      if (!payloadValue) {
-        return;
+
+      if (payloadValue.phoneNumber) {
+        const userDetails = await getUserByNumber(payloadValue.phoneNumber);
+        if(userDetails){
+          if (userDetails.email !== user.email) {
+            res.status(422).json({ message: "This phone number is already associated with another account. Please use a different phone number." });
+            return;
+          }
+        }
       }
 
       const updatableUser = new User({

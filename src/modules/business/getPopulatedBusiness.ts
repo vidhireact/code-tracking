@@ -19,7 +19,7 @@ export const getPopulatedBusiness = async (_id: string) => {
       select: "-__v",
     })
     .populate({
-      path: "serviceIds",
+      path: "categoryIds",
       select: "-__v",
     })
     .populate({
