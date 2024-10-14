@@ -6,7 +6,7 @@ import { IUser } from "../user";
 export const getRecommendPlanByServiceId = async ({
   page,
   limit,
-  serviceId,
+  //serviceId,
   user,
 }: {
   user: IUser;
@@ -163,11 +163,11 @@ export const getRecommendPlanByServiceId = async ({
               userId: { $ne: new Types.ObjectId(user._id) },
             },
           },
-          {
-            $match: {
-              service: { $eq: new Types.ObjectId(serviceId) },
-            },
-          },
+          // {
+          //   $match: {
+          //     serviceIds: { $eq: new Types.ObjectId(serviceId) },
+          //   },
+          // },
           {
             $lookup: {
               from: "locations",
@@ -264,7 +264,7 @@ export const getRecommendPlanByServiceId = async ({
       },
     },
     {
-      $match: { businessIds: { $lte: [{ $size: "$businessIds" }, 0] } },
+      $match: { businessIds: { $gt: [{ $size: "$businessIds" }, 0] } },
     },
     {
       $project: {
