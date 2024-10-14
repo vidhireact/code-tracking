@@ -125,6 +125,7 @@ export const getActivePlanByServiceId = async ({
                     website: 1,
                     phoneNumber: 1,
                     distance: 1,
+                    locationIds: 1,
                   },
                 },
               ],
@@ -134,7 +135,29 @@ export const getActivePlanByServiceId = async ({
       },
     },
     {
-      $match: { businessIds: { $gt: [{ $size: "$businessIds" }, 0] } },
+      $match: {
+        $expr: {
+          $gt: [{ $size: "$businessIds" }, 0],
+        },
+      },
+    },
+    {
+      $match: {
+        $expr: {
+          $gt: [
+            {
+              $size: {
+                $filter: {
+                  input: "$businessIds",
+                  as: "business",
+                  cond: { $gt: [{ $size: "$$business.locationIds" }, 0] },
+                },
+              },
+            },
+            0,
+          ],
+        },
+      },
     },
     {
       $project: {
