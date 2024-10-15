@@ -13,7 +13,6 @@ import { getServiceById } from "../../modules/service";
 import { Request } from "../../request";
 import { User, updateUser } from "../../modules/user";
 import Joi from "joi";
-import { Types } from "mongoose";
 
 export default class Controller {
   private readonly updateLikedPlanSchema = Joi.object().keys({
@@ -78,13 +77,8 @@ export default class Controller {
           serviceId,
           user: authUser,
         });
-
-        const service_id = new Types.ObjectId(serviceId);
-
-        // some
-        const filterPlan = plans.filter(plan => plan.serviceId.find(serviceId => serviceId.equals(service_id)));
         
-        res.status(200).json(filterPlan);
+        res.status(200).json(plans);
         return;
       }
     } catch (error) {
@@ -115,36 +109,6 @@ export default class Controller {
           serviceId,
           user: authUser,
         });        
-
-        // const plan = await getActivePlanByServiceId({
-        //   page: 1,
-        //   limit: 20,
-        //   serviceId,
-        //   user: authUser,
-        // });
-        
-        // const service_id = new Types.ObjectId(serviceId);
-
-        // // some
-        // const filterPlan = plan.filter(plan => plan.serviceId.find(serviceId => serviceId.equals(service_id)));
-        
-        // // const filterRecommendPlan = plans.filter(plan => plan.serviceId.find(serviceId => serviceId.equals(service_id)) && true);
-
-        // const reduceUse = plans.reduce((acc, p) => {
-        //   // console.log("1",!!p.serviceId.find((s: any) => s.equals(service_id)));
-        //   // console.log("2",!filterPlan.some((f) => f._id.equals(p._id)));
-          
-        //   // eslint-disable-next-line no-extra-boolean-cast
-        //   if (
-        //     !!p.serviceId.find((s) => s.equals(service_id)) &&
-        //     !filterPlan.some((f) => f._id.equals(p._id))
-        //   ) {
-        //     acc.push(p);
-        //   }
-        //   return acc;
-        // }, []);
-        
-        // // const filterRecommendPlan = plans.filter(item1 => {return !filterPlan.some(item2 => item2._id.equals(item1._id))});        
 
         res.status(200).json(plans);
         return;

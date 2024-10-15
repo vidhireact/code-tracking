@@ -137,7 +137,25 @@ export const getRecommendPlanByServiceId = async ({
     {
       $match: {
         $expr: {
-          $lte: [{ $size: "$businessIds" }, 0],
+          $gt: [{ $size: "$businessIds" }, 0],
+        },
+      },
+    },
+    {
+      $match: {
+        $expr: {
+          $gt: [
+            {
+              $size: {
+                $filter: {
+                  input: "$businessIds",
+                  as: "business",
+                  cond: { $gt: [{ $size: "$$business.locationIds" }, 0] },
+                },
+              },
+            },
+            0,
+          ],
         },
       },
     },
@@ -167,5 +185,28 @@ export const getRecommendPlanByServiceId = async ({
     },
   ]);
 
-  return plans;
+  const planIds = plans.map(plan => plan._id); // Get IDs of existing plans
+
+  const recommendPlans = await PlanModel.find({
+    serviceId: new Types.ObjectId(serviceId),
+    _id: { $nin: planIds }, // Exclude existing plans
+    // Add any additional conditions here if needed
+    isActive: true, // Example condition
+  })
+  .select({
+    _id: 1,
+    name: 1,
+    description: 1,
+    keyFeatures: 1,
+    price: 1,
+    duration: 1,
+    serviceId: 1,
+    visits: 1,
+    createdAt: 1,
+  })
+  .skip(skip) // Pagination
+  .limit(20); // Limit the number of results
+  
+
+  return recommendPlans;
 };

@@ -160,6 +160,11 @@ export const getActivePlanByServiceId = async ({
       },
     },
     {
+      $match: {
+        serviceId: { $eq: new Types.ObjectId(serviceId) },
+      },
+    },
+    {
       $project: {
         _id: 1,
         name: 1,
