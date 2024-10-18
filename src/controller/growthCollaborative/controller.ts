@@ -212,7 +212,7 @@ export default class Controller {
 
       const updatedBusiness = await updateBusiness(
         new Business({
-          ...business.toJSON(),
+          ...business,
           growthCollaborativeId: payloadValue.grothCollabrativeId,
         })
       );

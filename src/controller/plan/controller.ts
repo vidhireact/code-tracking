@@ -223,7 +223,7 @@ export default class Controller {
 
       const updatedBusiness = await updateBusiness(
         new Business({
-          ...business.toJSON(),
+          ...business,
           planIds: _uniqBy(
             [...business.planIds, ...payloadValue.planIds],
             (id) => id.toString()
