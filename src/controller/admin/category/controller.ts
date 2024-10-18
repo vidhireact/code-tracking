@@ -31,15 +31,15 @@ export default class Controller {
 
   private readonly updateSchema = Joi.object().keys({
     name: Joi.string()
-      .optional()
-      .external(async (v: string) => {
-        const category = await getCategoryByName(v);
+      .optional(),
+      // .external(async (v: string) => {
+      //   const category = await getCategoryByName(v);
 
-        if (category) {
-          throw new Error("Please provide valid category-name.");
-        }
-        return v;
-      }),
+      //   if (category) {
+      //     throw new Error("Please provide valid category-name.");
+      //   }
+      //   return v;
+      // }),
   });
 
   protected readonly getCategoryForService = async (req: Request, res: Response) => {
@@ -177,6 +177,24 @@ export default class Controller {
           return;
         });
       if (!payloadValue) {
+        return;
+      }
+
+      const categoryDetails = await getCategoryByName(payloadValue.name);
+      
+      if (
+        categoryDetails &&
+        category._id.toString() === categoryDetails._id.toString()
+      ) {
+        res.status(200).json(category);
+        return;
+      }
+
+      if (
+        categoryDetails &&
+        category._id.toString() !== categoryDetails._id.toString()
+      ) {
+        res.status(422).json({ message: "category already used." });
         return;
       }
 

@@ -10,7 +10,7 @@ export const getGrowthCollaborativeByServiceArray = async ({
   page: number;
   limit: number;
   serviceId: string[];
-  priceSum: string;
+  priceSum: number;
 }) => {
   const skip = (page - 1) * limit;
 

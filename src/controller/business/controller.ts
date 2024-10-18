@@ -44,94 +44,91 @@ export default class Controller {
       .required()
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/),
     roles: Joi.array()
-    .items(Joi.string().valid("reader", "employee")) //
-    .required()
-    .max(2),
+      .items(Joi.string().valid("reader", "employee")) //
+      .required()
+      .max(2),
   });
-  private readonly createSchema = Joi.object()
-    .keys({
-      name: Joi.string().required(),
-      description: Joi.string().required(),
-      // email: Joi.string().email().required(),
-      // phoneNumber: Joi.string()
-      //   .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
-      //   .required(),
-      logo: Joi.string().required(),
-      categoryIds: Joi.array().items(
-        Joi.string().external(async (v: string) => {
-          if (!v) return v;
-          const category = await getCategoryById(v);
-          if (!category) {
-            throw new Error("Please provide valid category.");
+  private readonly createSchema = Joi.object().keys({
+    name: Joi.string().required(),
+    description: Joi.string().required(),
+    // email: Joi.string().email().required(),
+    // phoneNumber: Joi.string()
+    //   .pattern(/^\+([0-9]{1,3})\)?[\s]?[0-9]{6,14}$/)
+    //   .required(),
+    logo: Joi.string().required(),
+    categoryIds: Joi.array().items(
+      Joi.string().external(async (v: string) => {
+        if (!v) return v;
+        const category = await getCategoryById(v);
+        if (!category) {
+          throw new Error("Please provide valid category.");
+        }
+        return v;
+      })
+    ),
+    serviceIds: Joi.array().items(
+      Joi.string().external(async (v: string) => {
+        if (!v) return v;
+        const service = await getServiceById(v);
+        if (!service) {
+          throw new Error("Please provide valid  service.");
+        }
+        return v;
+      })
+    ),
+    growthCollaborativeId: Joi.string()
+      .optional()
+      .external(async (v: string, helpers) => {
+        if (!v) return v;
+        const growthCollaborative = await getGrowthCollaborativeById(v);
+        if (!growthCollaborative) {
+          throw new Error("Please provide valid growthCollaborative.");
+        }
+        const serviceId = helpers.state.ancestors[0].serviceIds;
+        if (
+          !serviceId.some((id) => growthCollaborative.serviceId.includes(id))
+        ) {
+          throw new Error(
+            "Please provide valid service related to growthCollaborative plan."
+          );
+        }
+        return v;
+      }),
+    locationIds: Joi.array()
+      .required()
+      .items(Joi.string())
+      .external(async (value) => {
+        if (!value) return;
+        if (!value.length) return;
+        for await (const item of value) {
+          const location = await getLocationById(item);
+          if (!location) {
+            throw new Error("Please provide valid location.");
           }
-          return v;
-        })
-      ),
-      serviceIds: Joi.array().items(
-        Joi.string().external(async (v: string) => {
-          if (!v) return v;
-          const service = await getServiceById(v);          
-          if (!service) {
-            throw new Error("Please provide valid  service.");
-          }
-          return v;
-        })
-      ),
-      growthCollaborativeId: Joi.string()
-        .required()
-        .external(async (v: string, helpers) => {
-          if (!v) return v;
-          const growthCollaborative = await getGrowthCollaborativeById(v);
-          if (!growthCollaborative) {
-            throw new Error("Please provide valid growthCollaborative.");
-          }
-          const serviceId = helpers.state.ancestors[0].serviceIds;
-          if (
-            !serviceId.some((id) => growthCollaborative.serviceId.includes(id))
-          ) {
-            throw new Error(
-              "Please provide valid service related to growthCollaborative plan."
-            );
-          }
-          return v;
-        }),
-      locationIds: Joi.array()
-        .required()
-        .items(Joi.string())
-        .external(async (value) => {
-          if (!value) return;
-          if (!value.length) return;
-          for await (const item of value) {
-            const location = await getLocationById(item);
-            if (!location) {
-              throw new Error("Please provide valid location.");
+        }
+        return value;
+      }),
+    planIds: Joi.array()
+      .optional()
+      .items(Joi.string())
+      .external(async (value, helpers) => {
+        const serviceId = helpers.state.ancestors[0].serviceIds;
+        if (!value) return;
+        if (!value.length) return;
+        for await (const item of value) {
+          const plan = await getPlanById(item);
+          if (!plan) {
+            throw new Error("Please provide valid Plan.");
+          } else {
+            if (!serviceId.some((id) => plan.serviceId.includes(id))) {
+              throw new Error("Please provide valid service related to plan.");
             }
           }
-          return value;
-        }),
-      planIds: Joi.array()
-        .required()
-        .items(Joi.string())
-        .external(async (value, helpers) => {
-          const serviceId = helpers.state.ancestors[0].serviceIds;
-          if (!value) return;
-          if (!value.length) return;
-          for await (const item of value) {
-            const plan = await getPlanById(item);
-            if (!plan) {
-              throw new Error("Please provide valid Plan.");
-            } else {
-              if (!serviceId.some((id) => plan.serviceId.includes(id))) {
-                throw new Error(
-                  "Please provide valid service related to plan."
-                );
-              }
-            }
-          }
-          return value;
-        }),
-      waitWhileUser: this.waitWhileUserSchema,
-    })
+        }
+        return value;
+      }),
+    // waitWhileUser: this.waitWhileUserSchema,
+  });
 
   private readonly updateSchema = Joi.object().keys({
     name: Joi.string().optional(),
@@ -201,8 +198,8 @@ export default class Controller {
         });
       if (!payloadValue) {
         return;
-      }   
-      
+      }
+
       // ####
 
       const waitWhileApiKey = process.env.WAIT_WHILE_KEY;
@@ -269,63 +266,67 @@ export default class Controller {
         await axios(options);
       }
 
-      const option = {
-        url: `${process.env.WAITWHILE_BASE_URL}/users`,
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "content-type": "application/json",
-          apikey: `${waitWhileApiKey}`,
-        },
-        data: JSON.stringify({
-          name: detailUser.name,
-          email: detailUser.email,
-          password: detailUser.password,
-          locationIds: [response.data.id],
-          roles: detailUser.roles,
-        }),
-      };
+      // ####
 
-      await axios(option);
+      // const detailUser = payloadValue.waitWhileUser;
 
-      const password = AES.encrypt(
-        payloadValue.waitWhileUser.password,
-        process.env.AES_KEY
-      ).toString();
+      // const option = {
+      //   url: `${process.env.WAITWHILE_BASE_URL}/users`,
+      //   method: "POST",
+      //   headers: {
+      //     accept: "application/json",
+      //     "content-type": "application/json",
+      //     apikey: `${waitWhileApiKey}`,
+      //   },
+      //   data: JSON.stringify({
+      //     name: detailUser.name,
+      //     email: detailUser.email,
+      //     password: detailUser.password,
+      //     locationIds: [response.data.id],
+      //     roles: detailUser.roles,
+      //   }),
+      // };
 
-      await saveWaitWhileUser(
-        new WaitWhileUser({
-          ...payloadValue.waitWhileUser,
-          password: password,
-        })
-      ).catch((e) => {
-        console.log(e);
-        res.status(422).json({ message: e.message });
-        return;
-      });
+      // await axios(option);
 
-      const getWaitWhileUser = await getWaitWhileUserByEmail(
-        payloadValue.waitWhileUser.email
-      );
+      // const password = AES.encrypt(
+      //   payloadValue.waitWhileUser.password,
+      //   process.env.AES_KEY
+      // ).toString();
+
+      // await saveWaitWhileUser(
+      //   new WaitWhileUser({
+      //     ...payloadValue.waitWhileUser,
+      //     password: password,
+      //   })
+      // ).catch((e) => {
+      //   console.log(e);
+      //   res.status(422).json({ message: e.message });
+      //   return;
+      // });
+
+      // const getWaitWhileUser = await getWaitWhileUserByEmail(
+      //   payloadValue.waitWhileUser.email
+      // );
 
       // ######
 
       const business = await saveBusiness(
         new Business({
           ...payloadValue,
-          waitWhileUserId: [getWaitWhileUser._id],
+          // waitWhileUserId: [getWaitWhileUser._id],
           waitWhileLocationId: response.data.id,
           waitWhileScheduleLink: response.data.shortName,
           userId: authUser._id.toString(),
         })
       );
 
-      await updateWaitWhileUser(
-        new WaitWhileUser({
-          ...getWaitWhileUser,
-          businessId: business._id,
-        })
-      );
+      // await updateWaitWhileUser(
+      //   new WaitWhileUser({
+      //     ...getWaitWhileUser,
+      //     businessId: business._id,
+      //   })
+      // );
 
       const newBusiness = await getBusinessById(business._id);
       res.status(200).json(newBusiness);

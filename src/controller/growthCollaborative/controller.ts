@@ -8,6 +8,7 @@ import { Request } from "../../request";
 import { getServiceById } from "../../modules/service";
 import Joi from "joi";
 import { getPlanById } from "../../modules/plan";
+import { getBusinessById } from "../../modules/business";
 
 export default class Controller {
   private readonly validatePlanSchema = Joi.object().keys({
@@ -115,4 +116,50 @@ export default class Controller {
       });
     }
   };
+
+  protected readonly getGrowthCollaborativeByBusinessId = async (req: Request, res: Response) => {
+    try {
+      const { businessId } = req.params;
+      if ( !businessId ) {
+        res.status(422).json({ message: "Invalid BusinessID." });
+        return;
+      }
+      const businessDetails = await getBusinessById( businessId );
+      if ( !businessDetails ) {
+        res.status(422).json({ message: "Invalid Business." });
+        return;
+      }
+
+      const planIds = businessDetails.planIds;
+      const serviceId = businessDetails.serviceIds;
+
+      const priceSum = await planIds.reduce(async (accPromise, val:string) => {
+        const acc = await accPromise;
+        const plan = await getPlanById(val);
+        
+        if (!plan) {
+          throw new Error("Please provide valid Plan.");
+        }
+      
+        return acc + plan.price;
+      }, Promise.resolve(0));
+      
+      console.log("Total Price:", priceSum);
+      
+      const plans = await getGrowthCollaborativeByServiceArray({
+        page: 1,
+        limit: 20,
+        serviceId,
+        priceSum,
+      });
+
+      res.status(200).json(plans);
+    } catch (error) {
+      console.log("error", "error in get growthCollaborative by businessId", error);
+      res.status(500).json({
+        message: "Hmm... Something went wrong. Please try again later.",
+        error: _get(error, "message"),
+      });
+    }
+  }
 }

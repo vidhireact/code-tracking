@@ -48,16 +48,7 @@ export default class Controller {
       }),
   });
   private readonly updateSchema = Joi.object().keys({
-    name: Joi.string()
-      .optional()
-      .external(async (v: string) => {
-        if (!v) return v;
-        const service = await getServiceByName(v);
-        if (service) {
-          throw new Error("Please provide valid service name.");
-        }
-        return v;
-      }),
+    name: Joi.string().optional(),
     categoryId: Joi.string()
       .optional()
       .external(async (v: string) => {
@@ -206,6 +197,23 @@ export default class Controller {
           return;
         });
       if (!payloadValue) {
+        return;
+      }
+
+      const serviceDetail = await getServiceByName(payloadValue.name);
+      if (
+        serviceDetail &&
+        service._id.toString() === serviceDetail._id.toString()
+      ) {
+        res.status(200).json(service);
+        return;
+      }
+
+      if (
+        serviceDetail &&
+        service._id.toString() !== serviceDetail._id.toString()
+      ) {
+        res.status(422).json({ message: "services already used." });
         return;
       }
 

@@ -13,6 +13,11 @@ import { getServiceById } from "../../modules/service";
 import { Request } from "../../request";
 import { User, updateUser } from "../../modules/user";
 import Joi from "joi";
+import {
+  Business,
+  getBusinessById,
+  updateBusiness,
+} from "../../modules/business";
 
 export default class Controller {
   private readonly updateLikedPlanSchema = Joi.object().keys({
@@ -23,6 +28,33 @@ export default class Controller {
         const plan = await getPlanById(value);
         if (!plan) {
           throw new Error("Please provide valid plan.");
+        }
+        return value;
+      }),
+  });
+
+  private readonly updateCheckPlanSchema = Joi.object().keys({
+    businessId: Joi.string()
+      .required()
+      .external(async (v) => {
+        if (!v) throw new Error("Please provide valid BusinessID.");
+        const business = await getBusinessById(v);
+        if (!business) {
+          throw new Error("Please provide valid BusinessID.");
+        }
+        return v;
+      }),
+    planIds: Joi.array()
+      .required()
+      .items(Joi.string())
+      .external(async (value) => {
+        if (!value) return;
+        if (!value.length) return;
+        for await (const item of value) {
+          const plan = await getPlanById(item);
+          if (!plan) {
+            throw new Error("Please provide valid Plan.");
+          }
         }
         return value;
       }),
@@ -66,7 +98,7 @@ export default class Controller {
       } else {
         const serviceDetails = await getServiceById(serviceId);
 
-        if(!serviceDetails){
+        if (!serviceDetails) {
           res.status(422).json({ message: "Invalid service." });
           return;
         }
@@ -77,7 +109,7 @@ export default class Controller {
           serviceId,
           user: authUser,
         });
-        
+
         res.status(200).json(plans);
         return;
       }
@@ -102,13 +134,12 @@ export default class Controller {
         res.status(200).json(plans);
         return;
       } else {
-
         const plans = await getRecommendPlanByServiceId({
           page: 1,
           limit: 20,
           serviceId,
           user: authUser,
-        });        
+        });
 
         res.status(200).json(plans);
         return;
@@ -164,6 +195,45 @@ export default class Controller {
       res.status(200).json({ message: "Plan Liked." });
     } catch (error) {
       console.log("error", "error in get plan by service id", error);
+      res.status(500).json({
+        message: "Hmm... Something went wrong. Please try again later.",
+        error: _get(error, "message"),
+      });
+    }
+  };
+
+  protected readonly updateCheckPlan = async (req: Request, res: Response) => {
+    try {
+      const payload = req.body;
+      const payloadValue = await this.updateCheckPlanSchema
+        .validateAsync(payload)
+        .then((value) => {
+          return value;
+        })
+        .catch((e) => {
+          console.log(e);
+          res.status(422).json({ message: e.message });
+          return;
+        });
+      if (!payloadValue) {
+        return;
+      }
+
+      const business = await getBusinessById(payloadValue.businessId);
+
+      const updatedBusiness = await updateBusiness(
+        new Business({
+          ...business.toJSON(),
+          planIds: _uniqBy(
+            [...business.planIds, ...payloadValue.planIds],
+            (id) => id.toString()
+          ),
+        })
+      );
+
+      res.status(200).json(updatedBusiness);
+    } catch (error) {
+      console.log("error", "error in check plan.", error);
       res.status(500).json({
         message: "Hmm... Something went wrong. Please try again later.",
         error: _get(error, "message"),
