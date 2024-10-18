@@ -29,6 +29,7 @@ export default class Controller {
       }),
   });
 
+  
   private readonly updateSchema = Joi.object().keys({
     name: Joi.string()
       .optional()
