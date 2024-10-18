@@ -8,7 +8,11 @@ import { Request } from "../../request";
 import { getServiceById } from "../../modules/service";
 import Joi from "joi";
 import { getPlanById } from "../../modules/plan";
-import { getBusinessById } from "../../modules/business";
+import {
+  Business,
+  getBusinessById,
+  updateBusiness,
+} from "../../modules/business";
 
 export default class Controller {
   private readonly validatePlanSchema = Joi.object().keys({
@@ -50,6 +54,20 @@ export default class Controller {
         }
         return value;
       }),
+  });
+
+  private readonly validateSelectGrothCollabrative = Joi.object().keys({
+    businessId: Joi.string()
+      .required()
+      .external(async (v) => {
+        if (!v) throw new Error("Please provide valid BusinessId.");
+        const business = await getBusinessById(v);
+        if (!business) {
+          throw new Error("Please provide valid BusinessId.");
+        }
+        return v;
+      }),
+    grothCollabrativeId: Joi.string().optional(),
   });
 
   protected readonly get = async (req: Request, res: Response) => {
@@ -117,15 +135,18 @@ export default class Controller {
     }
   };
 
-  protected readonly getGrowthCollaborativeByBusinessId = async (req: Request, res: Response) => {
+  protected readonly getGrowthCollaborativeByBusinessId = async (
+    req: Request,
+    res: Response
+  ) => {
     try {
       const { businessId } = req.params;
-      if ( !businessId ) {
+      if (!businessId) {
         res.status(422).json({ message: "Invalid BusinessID." });
         return;
       }
-      const businessDetails = await getBusinessById( businessId );
-      if ( !businessDetails ) {
+      const businessDetails = await getBusinessById(businessId);
+      if (!businessDetails) {
         res.status(422).json({ message: "Invalid Business." });
         return;
       }
@@ -133,19 +154,19 @@ export default class Controller {
       const planIds = businessDetails.planIds;
       const serviceId = businessDetails.serviceIds;
 
-      const priceSum = await planIds.reduce(async (accPromise, val:string) => {
+      const priceSum = await planIds.reduce(async (accPromise, val: string) => {
         const acc = await accPromise;
         const plan = await getPlanById(val);
-        
+
         if (!plan) {
           throw new Error("Please provide valid Plan.");
         }
-      
+
         return acc + plan.price;
       }, Promise.resolve(0));
-      
+
       console.log("Total Price:", priceSum);
-      
+
       const plans = await getGrowthCollaborativeByServiceArray({
         page: 1,
         limit: 20,
@@ -155,11 +176,54 @@ export default class Controller {
 
       res.status(200).json(plans);
     } catch (error) {
-      console.log("error", "error in get growthCollaborative by businessId", error);
+      console.log(
+        "error",
+        "error in get growthCollaborative by businessId",
+        error
+      );
       res.status(500).json({
         message: "Hmm... Something went wrong. Please try again later.",
         error: _get(error, "message"),
       });
     }
-  }
+  };
+
+  protected readonly selectGrothCollabrative = async (
+    req: Request,
+    res: Response
+  ) => {
+    try {
+      const payload = req.body;
+      const payloadValue = await this.validateSelectGrothCollabrative
+        .validateAsync(payload)
+        .then((value) => {
+          return value;
+        })
+        .catch((e) => {
+          console.log(e);
+          res.status(422).json({ message: e.message });
+          return;
+        });
+      if (!payloadValue) {
+        return;
+      }
+
+      const business = await getBusinessById(payloadValue.businessId);
+
+      const updatedBusiness = await updateBusiness(
+        new Business({
+          ...business.toJSON(),
+          growthCollaborativeId: payloadValue.grothCollabrativeId,
+        })
+      );
+
+      res.status(200).json(updatedBusiness);
+    } catch (error) {
+      console.log("error", "error in selectGrothCollabrative.", error);
+      res.status(500).json({
+        message: "Hmm... Something went wrong. Please try again later.",
+        error: _get(error, "message"),
+      });
+    }
+  };
 }
