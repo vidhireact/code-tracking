@@ -28,7 +28,7 @@ const business = new Schema<IBusiness>(
       {
         type: Types.ObjectId,
         ref: "category",
-      }
+      },
     ],
     planIds: [
       {
@@ -39,6 +39,7 @@ const business = new Schema<IBusiness>(
     growthCollaborativeId: {
       type: Types.ObjectId,
       ref: "growth-collaborative",
+      default: null,
     },
     locationIds: [
       {
@@ -57,11 +58,11 @@ const business = new Schema<IBusiness>(
       },
     ],
     waitWhileLocationId: {
-      type: String
+      type: String,
     },
     waitWhileScheduleLink: {
-      type: String
-    }
+      type: String,
+    },
   },
   {
     timestamps: true,
