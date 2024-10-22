@@ -5,6 +5,7 @@ import { get as _get } from "lodash";
 import { AES } from "crypto-js";
 import {
   getPopulatedUser,
+  getUserByEmail,
   getUserById,
   getUserByNumber,
   IUser,
@@ -82,6 +83,23 @@ export default class Controller {
           console.log(e);
           res.status(422).json({ message: e.message });
         });
+
+      const userEmail = await getUserByEmail(payloadValue.email);
+      if (
+        userEmail &&
+        user._id.toString() === userEmail._id.toString()
+      ) {
+        res.status(200).json(user);
+        return;
+      }
+
+      if (
+        userEmail &&
+        user._id.toString() !== userEmail._id.toString()
+      ) {
+        res.status(422).json({ message: "user email already used." });
+        return;
+      }
 
       if (payloadValue.phoneNumber) {
         const userDetails = await getUserByNumber(payloadValue.phoneNumber);
