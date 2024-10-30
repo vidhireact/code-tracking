@@ -199,7 +199,7 @@ export default class Controller {
       if (!payloadValue) {
         return;
       }
-      //
+
       // ####
 
       const waitWhileApiKey = process.env.WAIT_WHILE_KEY;
