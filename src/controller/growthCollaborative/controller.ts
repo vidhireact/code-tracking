@@ -152,7 +152,7 @@ export default class Controller {
       }
 
       const planIds = businessDetails.planIds;
-      const serviceId = businessDetails.serviceIds;
+      const serviceId = businessDetails.serviceIds as string[];
 
       const priceSum = await planIds.reduce(async (accPromise, val: string) => {
         const acc = await accPromise;
