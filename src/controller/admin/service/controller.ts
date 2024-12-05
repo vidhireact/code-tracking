@@ -1,7 +1,12 @@
 import { Response } from "express";
 import axios from "axios";
 import Joi from "joi";
-import { get as _get, find as _find, uniqBy as _uniqBy } from "lodash";
+import {
+  get as _get,
+  find as _find,
+  uniqBy as _uniqBy,
+  remove as _remove,
+} from "lodash";
 import {
   getService,
   getServiceById,
@@ -201,9 +206,11 @@ export default class Controller {
       }
 
       const serviceDetail = await getServiceByName(payloadValue.name);
+
       if (
         serviceDetail &&
-        service._id.toString() === serviceDetail._id.toString()
+        service._id.toString() === serviceDetail._id.toString() &&
+        service.categoryId.toString() === payloadValue.categoryId.toString()
       ) {
         res.status(200).json(service);
         return;
@@ -214,8 +221,11 @@ export default class Controller {
         service._id.toString() !== serviceDetail._id.toString()
       ) {
         res.status(422).json({ message: "services already used." });
+        0;
         return;
       }
+
+      const categoryUpdate = await getCategoryById(payloadValue.categoryId);
 
       await axios({
         url: `${process.env.WAITWHILE_BASE_URL}/services/${service.waitWhileServiceId}`,
@@ -227,11 +237,34 @@ export default class Controller {
         },
         data: JSON.stringify({
           name: payloadValue.name,
+          parentId: categoryUpdate.waitWhileCategoryId,
         }),
       });
 
       const updatedService = await updateService(
         new Service({ ...service.toJSON(), ...payloadValue })
+      );
+
+      const category = await getCategoryById(service.categoryId.toString());
+
+      await updateCategory(
+        new Category({
+          ...category,
+          serviceIds: _remove(
+            category.serviceIds,
+            (id) => !(id.toString() === service._id.toString())
+          ),
+        })
+      );
+
+      await updateCategory(
+        new Category({
+          ...categoryUpdate,
+          serviceIds: _uniqBy(
+            [...categoryUpdate.serviceIds, updatedService._id],
+            (id) => id.toString()
+          ),
+        })
       );
 
       res.status(200).json(updatedService);
@@ -243,6 +276,50 @@ export default class Controller {
       });
     }
   };
+
+  // protected readonly check = async (req: Request, res: Response) => {
+  //   try {
+  //     const { serviceId } = req.params;
+  //     if (!serviceId) {
+  //       res.status(422).json({ message: "Invalid Service." });
+  //       return;
+  //     }
+  //     const service = await getServiceById(serviceId);
+  //     if (!service) {
+  //       res.status(422).json({ message: "Invalid Service." });
+  //       return;
+  //     }
+
+  //     const waitWhileApiKey = process.env.WAIT_WHILE_KEY;
+
+  //     const option = {
+  //       url: `${process.env.WAITWHILE_BASE_URL}/services/${service.waitWhileServiceId}`,
+  //       method: "GET",
+  //       headers: {
+  //         accept: "application/json",
+  //         "content-type": "application/json",
+  //         apikey: `${waitWhileApiKey}`,
+  //       },
+  //     };
+
+  //     const response = await axios(option);
+
+  //     const data = Array.from(response.data.locationIds);
+
+  //     if (data.length > 1) {
+  //       res.status(422).json({ message: "services already used" });
+  //       return;
+  //     }
+
+  //     res.status(200).json(service);
+  //   } catch (error) {
+  //     console.log("error", "error in Check Service", error);
+  //     res.status(500).json({
+  //       message: "Hmm... Something went wrong. Please try again later.",
+  //       error: _get(error, "message"),
+  //     });
+  //   }
+  // };
 
   protected readonly delete = async (req: Request, res: Response) => {
     try {
