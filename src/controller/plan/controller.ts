@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { get as _get, uniqBy as _uniqBy } from "lodash";
+import { get as _get, uniqBy as _uniqBy, includes as _includes, without as _without } from "lodash";
 import {
   Plan,
   getActivePlanByServiceId,
@@ -172,6 +172,27 @@ export default class Controller {
       }
 
       const plan = await getPlanById(payloadValue.planId);
+
+      if(_includes(plan.likedBy, authUser._id.toString())){
+        await updatePlan(
+          new Plan({
+            ...plan,
+            likedBy: _without(plan.likedBy, authUser._id.toString()
+            ),
+          })
+        );
+
+        await updateUser(
+          new User({
+            ...authUser,
+            likedPlan: _without(
+              authUser.likedPlan, plan._id.toString()
+            ),
+          })
+        );
+
+        res.status(200).json({ message: "Plan unLiked." });
+      }
 
       await updatePlan(
         new Plan({

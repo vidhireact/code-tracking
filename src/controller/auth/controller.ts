@@ -167,7 +167,7 @@ export default class Controller {
       ).toString(enc.Utf8);
 
       if (payloadValue.password !== userPassword) {
-        res.status(401).json({ message: "Invalid password" });
+        res.status(401).json({ message: "Invalid credentials" });
         return;
       }
 
