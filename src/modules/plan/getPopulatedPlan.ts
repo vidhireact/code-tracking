@@ -2,7 +2,7 @@ import { Plan, PlanModel } from ".";
 
 export const getPopulatedPlan = async (_id: string) => {
   const plan: Plan = await PlanModel.findById(_id).populate({
-    path: "serviceId",
+    path: "serviceIds",
     select: "-__v",
   });
 

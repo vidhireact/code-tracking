@@ -21,7 +21,7 @@ const plan = new Schema<IPlan>(
     visits: {
       type: Number,
     },
-    serviceId: [
+    serviceIds: [
       {
         type: Types.ObjectId,
         ref: "service",

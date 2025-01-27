@@ -18,7 +18,7 @@ export const getGrowthCollaborativeByServiceArray = async ({
     {
       $match: {
         cutOFF: { $gt: priceSum },
-        serviceId: { $in: serviceId.map((id) => new Types.ObjectId(id)) },
+        serviceIds: { $in: serviceId.map((id) => new Types.ObjectId(id)) },
       },
     },
     {

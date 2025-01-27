@@ -21,7 +21,7 @@ export default class Controller {
     keyFeatures: Joi.string().required(),
     percentage: Joi.number().required(),
     cutOFF: Joi.number().required(),
-    serviceId: Joi.array()
+    serviceIds: Joi.array()
       .items(Joi.string())
       .required()
       .external(async (value: [string]) => {

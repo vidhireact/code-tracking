@@ -11,7 +11,7 @@ export interface IGrowthCollaborative {
   keyFeatures: string;
   percentage: number;
 
-  serviceId: (string | IService)[];
+  serviceIds: (string | IService)[];
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -26,7 +26,7 @@ export class GrowthCollaborative implements IGrowthCollaborative {
   keyFeatures: string;
   percentage: number;
 
-  serviceId: (string | IService)[];
+  serviceIds: (string | IService)[];
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -41,7 +41,7 @@ export class GrowthCollaborative implements IGrowthCollaborative {
     this.percentage = input.percentage;
     this.cutOFF = input.cutOFF;
 
-    this.serviceId = input.serviceId;
+    this.serviceIds = input.serviceIds;
     this.createdAt = input.createdAt;
     this.updatedAt = input.updatedAt;
   }

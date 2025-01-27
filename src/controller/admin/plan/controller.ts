@@ -22,7 +22,7 @@ export default class Controller {
     price: Joi.number().required(),
     duration: Joi.number().required(),
     visits: Joi.number().required(),
-    serviceId: Joi.array()
+    serviceIds: Joi.array()
       .items(Joi.string())
       .required()
       .external(async (value: [string]) => {
